@@ -1,0 +1,334 @@
+<html>
+    <head>
+        <style type="text/css">
+@keyframes ThirdCycle {
+    0%  {fill:none}
+    66.6666666% {fill:none}
+    66.6666667% {fill:inherit}
+   100% {fill:inherit}
+}
+@keyframes ThirdCycleMiddle {
+    0%  {fill:none}
+    33.3333333% {fill:none}
+    33.3333334% {fill:inherit}
+    66.6666666% {fill:inherit}
+    66.6666667% {fill:none}
+   100% {fill:none}
+}
+@keyframes TwoThirdCycle {
+    0%  {fill:none}
+    33.3333333% {fill:none}
+    33.3333334% {fill:inherit}
+   100% {fill:inherit}
+}
+@keyframes HalfCycle {
+    0%  {fill:none}
+    49.9999999% {fill:none}
+    50.0000001% {fill:inherit}
+   100% {fill:inherit}
+}
+@keyframes Decimal {
+    00% {content: "0"}
+    09.9999999% {content: "0"}
+    10% {content: "1"}
+    19.9999999% {content: "1"}
+    20% {content: "2"}
+    29.9999999% {content: "2"}
+    30% {content: "3"}
+    39.9999999% {content: "3"}
+    40% {content: "4"}
+    49.9999999% {content: "4"}
+    50% {content: "5"}
+    59.9999999% {content: "5"}
+    60% {content: "6"}
+    69.9999999% {content: "6"}
+    70% {content: "7"}
+    79.9999999% {content: "7"}
+    80% {content: "8"}
+    89.9999999% {content: "8"}
+    90% {content: "9"}
+    99.9999999% {content: "9"}
+   100% {content: "0"}
+}
+@keyframes Base6 {
+    00% {content: "0"}
+    16.6666666% {content: "0"}
+    16.6666667% {content: "1"}
+    33.3333333% {content: "1"}
+    33.3333334% {content: "2"}
+    49.9999999% {content: "2"}
+    50% {content: "3"}
+    66.6666666% {content: "3"}
+    66.6666667% {content: "4"}
+    83.3333333% {content: "4"}
+    83.3333334% {content: "5"}
+    99.9999999% {content: "5"}
+    100% {content: "0"}
+}
+@keyframes Base12 {
+    00% {content: "00"}
+    8.3333333% {content: "00"}
+    8.3333334% {content: "01"}
+    16.6666666% {content: "01"}
+    16.6666667% {content: "02"}
+    24.9999999% {content: "02"}
+    25% {content: "03"}
+    33.3333333% {content: "03"}
+    33.3333334% {content: "04"}
+    41.6666666% {content: "04"}
+    41.6666667% {content: "05"}
+    49.9999999% {content: "05"}
+    50% {content: "06"}
+    58.3333333% {content: "06"}
+    58.3333334% {content: "07"}
+    66.6666666% {content: "07"}
+    66.6666667% {content: "08"}
+    74.9999999% {content: "08"}
+    75% {content: "09"}
+    83.3333333% {content: "09"}
+    83.3333334% {content: "10"}
+    91.6666666% {content: "10"}
+    91.6666667% {content: "11"}
+
+    99.9999999% {content: "11"}
+    100% {content: "00"}
+}
+@keyframes AMPM {
+    0% {content: "AM"}
+    49.9999% {content: "AM"}
+    50% {content: "PM"}
+    100% {content: "PM"}
+}
+body {
+    background-color: black;
+    color: white;
+}
+svg {
+    fill: red;
+}
+.A {
+    animation-name: TwoThirdCycle;
+}
+.B {
+    animation-name: ThirdCycle;
+}
+.C, .D {
+    animation-name: HalfCycle;
+}
+
+.A, .B, .C, .D {
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    stroke-width:1;stroke:rgb(200,200,200)
+}
+span:after {
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+.dozclock span:after {
+    animation-name: Base12;
+    content: "00"
+}
+.doz1:after {
+    animation-duration: 86400s;
+    color: red;
+}
+/* first digit tick every 2h = 7200 sec */
+.dig1 { fill: red; }
+.dig1 .A, .dig1 .B { animation-duration: calc(3*7200s); }
+.dig1 .C { animation-duration: calc(6*7200s); }
+.dig1 .D { animation-duration: calc(12*7200s); }
+
+.doz2:after {
+    animation-duration: 7200s; color: green;
+}
+/* second digit tick every 10min = 600s */
+.dig2 { fill: green; }
+.dig2 .A, .dig2 .B { animation-duration: calc(3*600s); }
+.dig2 .C { animation-duration: calc(6*600s); }
+.dig2 .D { animation-duration: calc(12*600s); }
+
+.doz3:after {
+    animation-duration: 600s; color: blue;
+}
+/* third digit tick every 50s */
+.dig3 { fill: blue; }
+.dig3 .A, .dig3 .B { animation-duration: calc(3*50s); }
+.dig3 .C { animation-duration: calc(6*50s); }
+.dig3 .D { animation-duration: calc(12*50s); }
+
+.doz4:after {
+    animation-duration: 50s; color: magenta;
+}
+/* 4th digit tick every 50s/12 = (4+1/6)s */
+.dig4 { fill: magenta; }
+.dig4 .A, .dig4 .B { animation-duration: calc(3*50s/12); }
+.dig4 .C { animation-duration: calc(6*50s/12); }
+.dig4 .D { animation-duration: calc(12*50s/12); }
+
+.doz5:after {
+    animation-duration: calc(50s/12); color: white;
+}
+/* 5th digit tick every 25s/72 */
+.dig5 { fill: white; }
+.dig5 * {stroke-width: 0;}
+.dig5 .A, .dig5 .B { animation-duration: calc(3*25s/72); }
+.dig5 .C { animation-duration: calc(6*25s/72); }
+.dig5 .D { animation-duration: calc(12*25s/72); }
+
+.ampm:after {
+    animation-name: AMPM;
+    animation-duration: 86400s;
+    content: "am"
+}
+.hour:after{
+    animation-name: Base12;
+    animation-duration: 43200s;
+    content: "0"
+}
+.tenmin:after {
+    animation-name: Base6; 
+    animation-duration: 3600s;
+    content: "0"
+}
+.min:after {
+    animation-name: Decimal; 
+    animation-duration: 600s;
+    content: "0"
+}
+.tensec:after {
+    animation-name: Base6; 
+    animation-duration: 60s;
+    content: "0"
+}
+.sec:after {
+    animation-name: Decimal; 
+    animation-duration: 10s;
+    content: "0"
+}
+
+.sectenth:after {
+    animation-name: Decimal; 
+    animation-duration: 1s;
+    content: "0"
+}
+
+.dec1:after {
+    animation-name: Decimal; 
+    animation-duration: 86400s;
+    content: "0"
+}
+.dec2:after {
+    animation-name: Decimal; 
+    animation-duration: 8640s;
+    content: "0"
+}
+.dec3:after {
+    animation-name: Decimal; 
+    animation-duration: 864s;
+    content: "0";
+}
+.dec4:after {
+    animation-name: Decimal; 
+    animation-duration: 86.4s;
+    content: "0";
+}
+.dec5:after {
+    animation-name: Decimal;
+    animation-duration: 8.64s;
+    content: "0"
+}
+        </style>
+        <script>
+            function makeClock(){
+                const d = new Date()
+                const offset = d.getSeconds() + 60*(d.getMinutes() + 60*(d.getHours()))
+                const text = `*{animation-delay: -${offset}s} span:after{animation-delay: -${offset}s}`
+                const stylesheet = document.getElementById("GLOBALOFFSET")
+                if (stylesheet){
+                    stylesheet.innerHTML = text
+                }
+            }
+        </script>
+    </head>
+    <body onload="makeClock()">
+        <style id="GLOBALOFFSET"></style>
+
+        <!-- <svg width="30" height="40" class="dig1">
+            <rect class="A" width="10" height="10" x="0" y="0" />
+            <rect class="B" width="20" height="10" x="10" y="0"/>
+            <rect class="C" width="10" height="30" x="0" y="10"/>
+            <rect class="D" width="20" height="30" x="10" y="10"/>
+        </svg>
+
+        <svg width="30" height="40" class="dig2">
+            <rect class="A" width="10" height="10" x="0" y="0" />
+            <rect class="B" width="20" height="10" x="10" y="0"/>
+            <rect class="C" width="10" height="30" x="0" y="10"/>
+            <rect class="D" width="20" height="30" x="10" y="10"/>
+        </svg>
+        <svg width="30" height="40" class="dig3">
+            <rect class="A" width="10" height="10" x="0" y="0" />
+            <rect class="B" width="20" height="10" x="10" y="0"/>
+            <rect class="C" width="10" height="30" x="0" y="10"/>
+            <rect class="D" width="20" height="30" x="10" y="10"/>
+        </svg>
+        <svg width="30" height="40" class="dig4">
+            <rect class="A" width="10" height="10" x="0" y="0" />
+            <rect class="B" width="20" height="10" x="10" y="0"/>
+            <rect class="C" width="10" height="30" x="0" y="10"/>
+            <rect class="D" width="20" height="30" x="10" y="10"/>
+        </svg> -->
+        <svg width="693" height="600" class="dozClock">
+            <g class="dig1">
+                <rect class="A" width="173" height="200" x="0" y="200" />
+                <rect class="B" width="173" height="200" x="0" y="400"/>
+                <rect class="C" width="520" height="200" x="173" y="0"/>
+                <rect class="D" width="520" height="400" x="173" y="200"/>
+            </g>
+            <g class="dig2">
+                <rect class="A" width="57.7" height="50" x="57.7" y="0" />
+                <rect class="B" width="57.7" height="50" x="115.47" y="0"/>
+                <rect class="C" width="57.7" height="150" x="0" y="50"/>
+                <rect class="D" width="115.47" height="150" x="57.7" y="50"/>
+            </g>
+            <g class="dig3">
+                <rect class="A" width="14.4" height="16.67" x="0" y="16.67" />
+                <rect class="B" width="14.4" height="16.67" x="0" y="33.33"/>
+                <rect class="C" width="43.3" height="16.67" x="14.4" y="0"/>
+                <rect class="D" width="43.3" height="33.33" x="14.4" y="16.67"/>
+            </g>
+            <g class="dig4">
+                <rect class="A" width="4.81" height="4.17" x="4.81" y="0" />
+                <rect class="B" width="4.81" height="4.17" x="9.62" y="0"/>
+                <rect class="C" width="4.81" height="12.5" x="0" y="4.17"/>
+                <rect class="D" width="9.62" height="12.5" x="4.81" y="4.17"/>
+            </g>
+            <g class="dig5">
+                <!-- <rect class="Last" width="1.2" height="1.39" x="0" y="0"/> -->
+                <rect class="A" width="1.2" height="1.39" x="0" y="1.39" />
+                <rect class="B" width="1.2" height="1.39" x="0" y="2.78"/>
+                <rect class="C" width="3.6" height="1.39" x="1.2" y="0"/>
+                <rect class="D" width="3.6" height="2.78" x="1.2" y="1.39"/>
+            </g>
+        </svg>
+        
+        <div class="dozclock">
+            dozonal: .
+            <span class="doz1"></span>
+            <span class="doz2"></span>
+            <span class="doz3"></span>
+            <span class="doz4"></span>
+            <span class="doz5"></span>
+        </div>
+        <div class="clock">
+            <span class="ampm"></span>
+            <span class="hour"></span>:<span class="tenmin"></span><span class="min"></span>:<span class="tensec"></span><span class="sec"></span> 
+            <!-- .<span class="sectenth"></span> -->
+        </div>
+        <div class="swatchclock">
+            millidays
+            <span class="dec1"></span><span class="dec2"></span><span class="dec3"></span>.<span class="dec4"></span><span class="dec5"></span>
+        </div>
+    </body>
+</html>

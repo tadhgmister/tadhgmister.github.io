@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title> calendar idea </title>
+    <meta name="color-scheme" content="light dark">
+    
+  </head>
+  <body>
+    <p>
+      There are 365 days in a typical year which is 73*5. A leap year has 366 days which is 6*61. Neither of these are nice divisions at all.
+    </p>
+    <p>
+      However, 364 is 7*13*4 which is still annoying prime numbers but more usable. We already have a concept of 7 days in a week and 4 seasons. If we have 13 weeks per season and one day that doesn't fit into any week we could have a viable calendar system.
+    </p>
+    <p>
+      13*4 also happens to be the number of cards in a typical playing card deck, 4 suits of 13 cards each (ace to king) so we could number the weeks using cards and then the extra day that doesn't fit into any other week could be a joker card (or a second joker on a leap year)
+    </p>
+    <p>
+      As a self contained system this would work great, however the idea of using a joker outside of typical weekday numbering (would be like having saturday, {random extra day}, sunday) which means that the days of a year would always be the same day of the week, but this means the week days doesn't match up at all with the current system so the bonus that we have 7 day weeks is somewhat lost.
+    </p>
+    <p>
+      to write a date we could write a year (lets just use base 10 so it matches our current system but if I was implementing this as a self contained system I'd probably use dozonal) followed by a symbol for the season/quarter, followed by a letter from a-m for the week, a number from 0-6 for the day of the week, a period and then the time as a dozonal fraction of a day.
+    </p>
+    <p>
+      Symbols used could be: #, +, /, ^
+    </p>
+    <p>
+      These are suggested since they are easily distinguishable and are in sort order in ascii. With this a typical date could look like
+    </p>
+    <p>
+      2024#E3.6
+    </p>
+    <p>
+      This would be the year 2024, first quarter (#), 5th week (E), 3rd day of the week (Wednesday), at noon (0.6 in dozonal is half way through the day). 
+    
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<html>
+    <head>
+        <style type="text/css">
+.A1 {animation-name: A1;
+--rowc: 4;
+--colc: 1; }
+@keyframes A1 {
+    0% {fill: none;}
+    10% {fill: none;}
+    10.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A2 {animation-name: A2;
+--rowc: 3;
+--colc: 1; }
+@keyframes A2 {
+    0% {fill: none;}
+    20% {fill: none;}
+    20.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A3 {animation-name: A3;
+--rowc: 2;
+--colc: 1; }
+@keyframes A3 {
+    0% {fill: none;}
+    30% {fill: none;}
+    30.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A4 {animation-name: A4;
+--rowc: 1;
+--colc: 1; }
+@keyframes A4 {
+    0% {fill: none;}
+    40% {fill: none;}
+    40.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A5 {animation-name: A5;
+--rowc: 0;
+--colc: 1; }
+@keyframes A5 {
+    0% {fill: none;}
+    50% {fill: none;}
+    50.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A6 {animation-name: A6;
+--rowc: 4;
+--colc: 0; }
+@keyframes A6 {
+    0% {fill: none;}
+    60% {fill: none;}
+    60.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A7 {animation-name: A7;
+--rowc: 3;
+--colc: 0; }
+@keyframes A7 {
+    0% {fill: none;}
+    70% {fill: none;}
+    70.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A8 {animation-name: A8;
+--rowc: 2;
+--colc: 0; }
+@keyframes A8 {
+    0% {fill: none;}
+    80% {fill: none;}
+    80.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.A9 {animation-name: A9;
+--rowc: 1;
+--colc: 0; }
+@keyframes A9 {
+    0% {fill: none;}
+    90% {fill: none;}
+    90.0001% {fill: inherit;}
+    100% {fill: inherit;}
+}
+.Last {animation-name: Last;
+    --rowc: 0;
+    --colc: 0;
+    animation-duration: calc(0.1*var(--timebasis));
+}
+@keyframes Last {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+body {
+    background-color: black;
+    color: white;
+    margin: 0;
+}
+svg {
+    max-width: 100vmax;
+    max-height: 100vmin;
+    width: auto;
+    height: auto;
+}
+@media (orientation: portrait){
+    svg {
+        transform:rotate(90deg)scaleY(-1);
+        transform-origin: 0% 0%;
+        width: auto;
+        height: 100vw;
+    }
+}
+@media (max-aspect-ratio: 16/25) {
+  svg {
+        width: 100vh;
+        height: auto;
+  }
+}
+g.dec1 {
+    --bw: 500;
+    --bh: 800;
+    --timebasis: 86400s;
+    fill: red;
+}
+g.dec2 {
+    --bw: 160;
+    --bh: 250;
+    --timebasis: 8640s;
+    fill: green;
+}
+g.dec3 {
+    --bw: 50;
+    --bh: 80;
+    --timebasis: 864s;
+    fill: blue;
+}
+g.dec4 {
+    --bw: 16;
+    --bh: 25;
+    --timebasis: 86.4s;
+    fill: magenta;
+}
+g.dec5 {
+    --bw: 5;
+    --bh: 8;
+    --timebasis: 8.64s;
+    fill: white;
+}
+g.horz rect {
+    width: var(--bw);
+    height: var(--bh);
+    x: calc(var(--rowc)*var(--bw));
+    y: calc(var(--colc)*var(--bh));
+}
+g.vert rect {
+    width: var(--bh);
+    height: var(--bw);
+    x: calc(var(--colc)*var(--bh));
+    y: calc(var(--rowc)*var(--bw));
+}
+rect {
+    animation-duration: var(--timebasis);
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    stroke-width:calc(0.02*var(--bh));stroke:rgb(200,200,200)
+}
+        </style>
+        <script>
+            function makeClock(){
+                const d = new Date()
+                const offset = d.getSeconds() + 60*(d.getMinutes() + 60*(d.getHours()))
+                const text = `*{animation-delay: -${offset}s} span:after{animation-delay: -${offset}s}`
+                const stylesheet = document.getElementById("GLOBALOFFSET")
+                if (stylesheet){
+                    stylesheet.innerHTML = text
+                }
+            }
+        </script>
+    </head>
+    <body onload="makeClock()">
+        <style id="GLOBALOFFSET"></style>
+
+        <svg class="dozClock" viewbox="0 0 2500 1600">
+            <g class="dec dec1 horz">
+                <rect class="A1"/><rect class="A2"/><rect class="A3"/><rect class="A4"/>
+                <rect class="A5"/><rect class="A6"/><rect class="A7"/><rect class="A8"/><rect class="A9"/>
+            </g>
+            <g class="dec dec2 vert">
+                <rect class="A1"/><rect class="A2"/><rect class="A3"/><rect class="A4"/>
+                <rect class="A5"/><rect class="A6"/><rect class="A7"/><rect class="A8"/><rect class="A9"/>
+            </g>
+            <g class="dec dec3 horz">
+                <rect class="A1"/><rect class="A2"/><rect class="A3"/><rect class="A4"/>
+                <rect class="A5"/><rect class="A6"/><rect class="A7"/><rect class="A8"/><rect class="A9"/>
+            </g>
+            <g class="dec dec4 vert">
+                <rect class="A1"/><rect class="A2"/><rect class="A3"/><rect class="A4"/>
+                <rect class="A5"/><rect class="A6"/><rect class="A7"/><rect class="A8"/><rect class="A9"/>
+            </g>
+            <g class="dec dec5 horz">
+                <rect class="Last"/>
+                <rect class="A1"/><rect class="A2"/><rect class="A3"/><rect class="A4"/>
+                <rect class="A5"/><rect class="A6"/><rect class="A7"/><rect class="A8"/><rect class="A9"/>
+            </g>
+        </svg>
+    </body>
+</html>
