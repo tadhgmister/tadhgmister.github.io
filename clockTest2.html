@@ -1,6 +1,9 @@
 <html>
 
-<head>
+  <head>
+    
+    <title> Dozonal time system </title>
+    <meta name="color-scheme" content="light dark">
     <style type="text/css">
         @keyframes ThirdCycle {
             0% {
@@ -324,11 +327,6 @@
             }
         }
 
-        body {
-            background-color: black;
-            color: white;
-        }
-
         .A {
             animation-name: ThirdCycleMiddle;
         }
@@ -349,8 +347,14 @@
             animation-iteration-count: infinite;
             animation-timing-function: linear;
             stroke-width: 1;
-            stroke: rgb(200, 200, 200)
+            stroke: black;
+	
         }
+	
+	  /* for dark theme make the stroke white */
+	  @media (prefers-color-scheme: dark) {
+           .A, .B, .C, .D {stroke: white;};
+	  }
 
         span:after {
             animation-iteration-count: infinite;
@@ -456,13 +460,23 @@
 
         .doz5:after {
             animation-duration: calc(50s/12);
-            color: white;
+            color: grey;
         }
+	
+	@media (prefers-color-scheme: dark) {
+	  .doz2:after {
+	    color: lightgreen;
+	  }
+	  .doz5:after {
+            color: lightgrey; 
+	  }
+	}
 
         /* 5th digit tick every 25s/72 */
         .dig5 {
-            fill: white;
+          fill: grey;
         }
+	
 
         .dig5 .A,
         .dig5 .B {
@@ -563,15 +577,34 @@
 </head>
 
 <body onload="makeClock()">
-    <style id="GLOBALOFFSET"></style>
-
+  <style id="GLOBALOFFSET"></style>
+  <h2 id="otherclocks"> Other time formats </h2>
+  <p> 12 hour clock. (this displays <q>00</q> when we would typically expect to see <q>12</q>) </p>
+    <ul><li class="clock">
+        <span class="ampm"></span>
+        <span class="hour"></span>:<span class="tenmin"></span><span class="min"></span>:<span
+            class="tensec"></span><span class="sec"></span>
+        <!-- .<span class="sectenth"></span> -->
+    </li></ul>
+    <p><a href="https://en.wikipedia.org/wiki/Swatch_Internet_Time"><q>.beat</q> time </a> is a system which uses 1/1000 of a day and overrides timezones. Using the local timezone and just labeling as millidays you get a similar system: </p>
+    <ul><li class="swatchclock">
+      
+        <span class="dec1"></span><span class="dec2"></span><span class="dec3"></span>.<span class="dec4"></span><span
+														   class="dec5"></span>
+	millidays
+    </li></ul>
+    <h2 id="dozclock"> Dozonal clock </h2>
+  <p>
+    If we take the real number of days since last midnight (between 0 and 1) and represent it in base 12 we get this:
+    </p>
     <div class="dozclock">
-        dozonal: .
+         0 .
         <span class="doz1"></span>
         <span class="doz2"></span>
         <span class="doz3"></span>
         <span class="doz4"></span>
         <span class="doz5"></span>
+	
     </div>
     <br />
     <svg width="30" height="40" class="dig1">
@@ -606,18 +639,8 @@
         <rect class="D" width="20" height="30" x="10" y="10" />
     </svg>
     <br />
-    <div class="clock">
-        <span class="ampm"></span>
-        <span class="hour"></span>:<span class="tenmin"></span><span class="min"></span>:<span
-            class="tensec"></span><span class="sec"></span>
-        <!-- .<span class="sectenth"></span> -->
-    </div>
-    <div class="swatchclock">
-        millidays
-        <span class="dec1"></span><span class="dec2"></span><span class="dec3"></span>.<span class="dec4"></span><span
-            class="dec5"></span>
-    </div>
-    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <h2 id="cheetsheet">Dozonal cheetsheet</h2>
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
         <div style="padding-right: 10px">
             <p>
                 <svg width="30" height="40">
@@ -729,7 +752,7 @@
                     <rect class="C" width="10" height="30" style="fill:red;" />
                 </svg>
                 <!-- = 12h / 2 -->
-                = 6h (black = hour hand is right side, red = hour hand is left side)
+                = 6h, hour hand is on (black=left, red=right) side of analog clock.
             </p>
             <p>
                 <svg width="10" height="10">
@@ -756,7 +779,7 @@
                 <svg width="10" height="30">
                     <rect class="C" width="10" height="30" style="fill:green;" />
                 </svg>
-                = 30min (black = minute hand is right side, green = minute hand is left side)
+                = 30min, minute hand is on ((black=right, green=left) side of analog clock
             </p>
             <p>
 
@@ -788,22 +811,21 @@
                 </svg>
                 = (4 + 1/6) sec =
                 <svg width="30" height="40">
-                    <rect class="A" width="10" height="10" x="0" y="0" style="fill:white;" />
-                    <rect class="B" width="20" height="10" x="10" y="0" style="fill:white;" />
-                    <rect class="C" width="10" height="30" x="0" y="10" style="fill:white;" />
-                    <rect class="D" width="20" height="30" x="10" y="10" style="fill:white;" />
+                    <rect class="A dig5" width="10" height="10" x="0" y="0"  />
+                    <rect class="B dig5" width="20" height="10" x="10" y="0" />
+                    <rect class="C dig5" width="10" height="30" x="0" y="10" />
+                    <rect class="D dig5" width="20" height="30" x="10" y="10" />
                 </svg>
             </p>
             <p>
                 <svg width="10" height="10">
-                    <rect class="A" width="10" height="10" style="fill:white;" />
+                    <rect class="A dig5" width="10" height="10" />
                 </svg>
                 = (25/72) sec, just over 1/3 I.E. one beat of "one mississippi"
             </p>
         </div>
     </div>
-
-
+ 
 </body>
 
 </html>
