@@ -35,7 +35,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 <!-- - Building webapps with NodeJS and Typescript 
 - HTML and CSS, have integrated Typescript, React, and Redux together and am familiar with nodeJS package management. -->
 - Inquisitive: naturally asks well formulated clarifying questions, ensures correct details of task before starting task, seek out solutions and test theories
-- Quick learner who once helped a friend write [Processing Java](https://processing.org/) code and had success editing and correcting their code for 2 hours before disclosing I had never used Processing before that session.
+- Quick learner who once helped a friend write [Processing Java](https://processing.org/) code and had success editing and correcting their code for 2 hours before disclosing I had never used Processing before that session
 - Use Linux as primary operating system and am comfortable using terminal for editing code, looking up documentation, compiling code, etc.
 <!-- - Will put in the extra effort to reduce headaches down the road. Particularly in documenting work  -->
 
@@ -46,7 +46,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 
 - Improved efficiency of backend MATLAB radio deployment simulation, reducing the test suite execution time to 60%
 - Coordinated 6 programmers in porting hardware cable routing simulations from existing iOS app to web application written in typescript, focusing on separating tasks to maximize parallel development
-- Crafted Typescript wrapper functions for React and Redux to enable our team to add typesafety with minimal code writing overhead to get type safety.
+- Crafted Typescript wrapper functions for React and Redux to enable our team to add typesafety with minimal code writing overhead
 <!-- - The above mentioned wrappers also improved error handling that simplified development by catching default cases and preventing uncaught errors to be shown in the development environment -->
 
 #### Teaching Assistant at Carleton

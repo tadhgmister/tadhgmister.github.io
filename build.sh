@@ -1,0 +1,1 @@
+guix shell tup pandoc -- tup
