@@ -15,8 +15,8 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 ## Contact and Online Profiles {#reachme}
 - Email: [tadhgmister@gmail.com](mailto:tadhgmister@gmail.com)
 - Texts and voicemail: [(343) 655-2007](tel:+13436552007)
-- [Stackoverflow](https://stackoverflow.com/users/5827215/tadhg-mcdonald-jensen)  top 2% overall by reputation
-	    <!-- <picture id="SOflair">
+- [Stackoverflow]  top 2% overall by reputation
+	    <!--[<picture id="SOflair">
 	      <source srcset="https://stackoverflow.com/users/flair/5827215.png?theme=dark" media="(prefers-color-scheme: dark)"/>
 	      <source srcset="https://stackoverflow.com/users/flair/5827215.png"           media="(prefers-color-scheme: light)"/>
 	    <img   src="https://stackoverflow.com/users/flair/5827215.png?theme=hotdog"
@@ -24,7 +24,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
           height="58" 
           alt="profile for Tadhg McDonald-Jensen at Stack Overflow, Q&amp;A for professional and enthusiast programmers" 
           title="profile for Tadhg McDonald-Jensen at Stack Overflow, Q&amp;A for professional and enthusiast programmers"/>
-	    </picture> ](https://stackoverflow.com/users/5827215/tadhg-mcdonald-jensen)-->
+	    </picture> ][Stackoverflow] -->
 - [Github account](https://github.com/tadhgmister)
 - [LinkedIn](https://www.linkedin.com/in/tadhg-mcdonald-jensen)
 <!-- - [facebook](https://www.facebook.com/tadhg.mcdonaldjensen/) -->
@@ -69,12 +69,12 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 
 
 ## Interesting things I've done {#things-ive-done}
-- For the 4th year project in Systems engineering our team designed a wearable watch to collect biometrics, I wrote the [program to offload the data from the device and log / graph it for demonstration.][4thyearproject]
+- For the 4th year engineering project our team designed a wearable watch to collect biometrics, I wrote the [program to offload the data from the device and log / graph it for demonstration.][4thyearproject]
 - Designed circuits in [Logisim] and [made edits to the Java source code][logisimfix] to better support using it on an iPad
 - [Github issues for typescript][typescriptAuthored] that I've authored including a
-	  [Viable proposal][tsInheritProposal] to one of typescripts longest outstanding limitations
+	  [viable proposal][tsInheritProposal] to one of typescripts longest outstanding limitations
 - [Contributions to eslint-typescript][eslintTSAuthored] including an interesting case where the solution was to [educate the users][eslintTSEducate] instead of 'fixing' their code
-- [Solved an obscure python issue][pythonTBWith] where certain cases error messages would point to a very misleading line numbers, the files linked at [the top of that page][pythonTBWithCode] are the codes I wrote to fix the issue; other maintainers used this to fix the problem
+- [Solved an obscure python issue][pythonTBWith] where certain cases error messages would point to very misleading line numbers, the files linked [in this page][pythonTBWithCode] are the codes I wrote to fix the issue; other maintainers used this to fix the problem
 - [Submitted a python bug report][pythonAsyncExitErrorMsg] about misleading error messages and had to argue that it was a legitimate issue before it was corrected
 - [YouTube video][ytcache] of brief overview of different forms of caching (expects a lot of prior knowledge)
 - A clock based on getting the current time as a real number of days between 0 and 1 and then representing it in:
@@ -118,10 +118,11 @@ title="Cats Callie (white feet) and Crackers (face against mine) at one of their
 <!-- </section> -->
 
 [tadhgorigin]: https://en.wikipedia.org/wiki/Tadhg
+[Stackoverflow]: https://stackoverflow.com/users/5827215/tadhg-mcdonald-jensen
 [ytCoordBox]: https://www.youtube.com/watch?v=PaiF3YGl-oI
 [ytcache]: https://www.youtube.com/watch?v=uJAeoA81gjs
 [4thyearproject]: https://github.com/MorganJamesSmith/BioSenseWearable/tree/master/companion_app#readme
-[clock]: clockTest2.html
+[clock]: clockAndCheatsheet.html
 [clockDozRec]: clockDozRecursive.html
 [clockDecRec]: clockDecRecursive.html
 [Logisim]: https://sourceforge.net/projects/circuit/
@@ -131,7 +132,7 @@ title="Cats Callie (white feet) and Crackers (face against mine) at one of their
 [eslintTSAuthored]: https://github.com/typescript-eslint/typescript-eslint/pulls?q=is%3Apr+author%3Atadhgmister+
 [eslintTSEducate]: https://github.com/typescript-eslint/typescript-eslint/pull/2437#issuecomment-683434856
 [pythonTBWith]: https://github.com/python/cpython/issues/69724#issuecomment-1093697337
-[pythonTBWithCode]: https://github.com/python/cpython/issues/69724#issue-1198943420
+[pythonTBWithCode]: https://bugs.python.org/issue25538
 [pythonAsyncExitErrorMsg]: https://github.com/python/cpython/issues/74108
 [sysc3303]: https://calendar.carleton.ca/search/?P=SYSC%203303
 [sysc4001]: https://calendar.carleton.ca/search/?P=SYSC%204001
