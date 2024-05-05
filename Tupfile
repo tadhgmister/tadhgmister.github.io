@@ -1,1 +1,1 @@
-: readme.md template.html |> pandoc --standalone --template template.html readme.md > %o|> index.html
+: readme.md template.html |> pandoc --section-divs --standalone --template template.html readme.md > %o|> index.html
