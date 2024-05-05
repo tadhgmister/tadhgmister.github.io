@@ -15,7 +15,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 ## Contact and Online Profiles {#reachme}
 - Email: [tadhgmister@gmail.com](mailto:tadhgmister@gmail.com)
 - Texts and voicemail: [(343) 655-2007](tel:+13436552007)
-- [Stackoverflow](https://stackoverflow.com/users/5827215/tadhg-mcdonald-jensen)  2% overall by reputation
+- [Stackoverflow](https://stackoverflow.com/users/5827215/tadhg-mcdonald-jensen)  top 2% overall by reputation
 	    <!-- <picture id="SOflair">
 	      <source srcset="https://stackoverflow.com/users/flair/5827215.png?theme=dark" media="(prefers-color-scheme: dark)"/>
 	      <source srcset="https://stackoverflow.com/users/flair/5827215.png"           media="(prefers-color-scheme: light)"/>
@@ -31,7 +31,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 
 ## Skills
 - Write clean, well documented code
-- Knowledgeable in: Python, Java, MATLAB, C, HTML, CSS, Typescript, Guile Scheme, bash, R, Latex, Applescript
+- Knowledgeable in: Python, Java, MATLAB, C, HTML, CSS, Typescript, Guile Scheme, Bash, R, Latex, Applescript
 <!-- - Building webapps with NodeJS and Typescript 
 - HTML and CSS, have integrated Typescript, React, and Redux together and am familiar with nodeJS package management. -->
 - Inquisitive: naturally asks well formulated clarifying questions, ensures correct details of task before starting task, seek out solutions and test theories
