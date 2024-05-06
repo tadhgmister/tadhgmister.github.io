@@ -1,17 +1,17 @@
 BEGIN:VCARD
 VERSION:4.0
 KIND:individual
-SOURCE:https://tadhg.mcdj.solutions/tadhg.vcf
+SOURCE:https://tadhg.mcdj.solutions/tadhg.vcard
 FN:Tadhg McDonald-Jensen
 N:McDonald-Jensen;Tadhg;Matthew;;
 URL:https://tadhg.mcdj.solutions
 PHOTO:https://tadhg.mcdj.solutions/favicon.png
 BDAY:19971227
 ADR:;;63 Bramblegrove Crescent;Ottawa;Ontario;K1T3G2;Canada
-GEO;TYPE=home:geo:45.36685380239688,-75.6232081859475
-TEL;VALUE=uri;TYPE="text,cell";PREF=1:tel:+13436552007
+GEO;TYPE=home:geo:45.36685380239688\,-75.6232081859475
+TEL;VALUE=uri;TYPE=text,cell;PREF=1:tel:+13436552007
 TEL;VALUE=text;TYPE=CELL:+1 (343) 655-2007
-TEL;VALUE=uri;TYPE="voice,home";PREF=2:tel:+16132498866
+TEL;VALUE=uri;TYPE=voice,home;PREF=2:tel:+16132498866
 TEL;VALUE=text;TYPE=HOME:+1 (613) 249-8866
 EMAIL;PREF=2:tadhg@mcdj.solutions
 EMAIL;PREF=1:tadhgmister@gmail.com
