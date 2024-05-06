@@ -13,7 +13,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 
 
 ## Contact and Online Profiles {#reachme}
-- [my contact card](tadhg.vcard)
+- [my contact card](tadhg.vcf)
 - Email: [tadhgmister@gmail.com](mailto:tadhgmister@gmail.com)
 - Texts and voicemail: [(343) 655-2007](tel:+13436552007)
 - [Stackoverflow]  top 2% overall by reputation
