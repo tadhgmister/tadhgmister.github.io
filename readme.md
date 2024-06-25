@@ -85,10 +85,11 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 - ["Scoops" as a unit of volume using base 12](scoops.html) to simplify cooking
 - [BookSUSAN](bookSUSAN/index.html): animated children's story written for grade 10 english
 <!-- - [Scriptable calculator](https://github.com/tadhgmister/Calculator_Awesome) that was immensely helpful in university physics , unfortunately the version that supported unit conversions and error propagation and derivatives has been lost. -->
-<!-- - Wrote the html for this website by hand and using Markdown -->
+- Wrote the html for this website by hand
 <!-- -  [YouTube walkthrough][ytCoordBox] of multi-threaded data structure analysis (made in the context of being a TA and wanting to help students understand how to analyze their code for correctness) -->
 
 ## Interests and hobbies {#hobbies}
+- Paddler on the Carleton Dragonboat team
 - Rubix cube variants like the [super skewb](https://www.puzzlemaster.ca/browse/cubepuzzle/7774-skewb-xtreme-10-color-edition), the [ghost cube](https://ruwix.com/twisty-puzzles/3x3x3-rubiks-cube-shape-mods-variations/ghost-cube/), and a lot of others. I take pride in having never looked up any algorithms for any of these and enjoy finding interesting colour patterns once I found a solution 
 - Maintain a [GNU Guix configuration](https://github.com/tadhgmister/dotfiles) for my personal computer that is reproducible 
 - Juggling and the associated [mathematics](https://www.youtube.com/watch?v=7dwgusHjA0Y)
@@ -100,7 +101,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 <!-- not sure you need to include the word scene with Ottawa Swing Dance -->
 - [Playlist of music I like](https://www.youtube.com/playlist?list=PLlbKEHjBs23Wha5AIzq34PapY_8PseQch)
 - Member of the [Carleton Improv Association](https://www.facebook.com/CarletonImprov/)
-<!-- - really want to be a DM for 5e dungeons and dragons but having anxiety issues so this is WIP  -->
+- really want to be a DM for 5e dungeons and dragons but having anxiety issues so this is WIP
 - Rock climbing and ultimate frisbee (and to lesser extent beach volleyball) 
 <!-- - unicycling, backflips, swimming in wave pools-->
 - Web comics: [XKCD](https://xkcd.com/), [Strong Female Protagonist](https://strongfemaleprotagonist.com/issue-1/page-0/), and [OOTS (D&D themed and very silly)](https://www.giantitp.com/comics/oots0001.html)
