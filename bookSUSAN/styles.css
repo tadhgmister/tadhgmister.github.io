@@ -12,6 +12,7 @@ nav {
     display: flex;
     flex-direction: row;
     max-height: 20vh;
+    order:99;
 }
 nav *{
     flex: 1;
