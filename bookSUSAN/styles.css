@@ -3,6 +3,7 @@ body {
     padding: 0 8px 0 8px;
     height: 100vh;
     display: flex;
+    justify-content:space-between;
     flex-direction: column;
     align-items: center;
 }
@@ -21,6 +22,9 @@ nav *{
     vertical-align: middle;
     margin-left: 5px;
     margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .back-to-home {
     background-color: rgba(255,160, 0, 0.4);
