@@ -104,7 +104,14 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 - really want to be a DM for 5e dungeons and dragons but having anxiety issues so this is WIP
 - Rock climbing and ultimate frisbee (and to lesser extent beach volleyball) 
 <!-- - unicycling, backflips, swimming in wave pools-->
-- Web comics: [XKCD](https://xkcd.com/), [Strong Female Protagonist](https://strongfemaleprotagonist.com/issue-1/page-0/), and [OOTS (D&D themed and very silly)](https://www.giantitp.com/comics/oots0001.html)
+
+Web comics I read and recommend
+
+ - [XKCD](https://xkcd.com/) ubiquitous web comic
+ - [Strong Female Protagonist](https://strongfemaleprotagonist.com/issue-1/page-0/) touches a lot of social issues and philosophy
+ - [Order Of the Stick](https://www.giantitp.com/comics/oots0001.html) D&D themed and very silly
+ - [Questionable Content](https://questionablecontent.net/view.php?comic=1) funny and has very interesting relationship dynamics
+ - [Akumei](https://akumeicomic.ca/comic/the-cat-page-1/) Dark and soulful. **Trigger warning:** shows self destructive intrusive thoughts. 
 
 <!-- </section> -->
 <!-- <section id="pictures"> -->
