@@ -8,12 +8,12 @@ desc: CV and personal information about Tadhg McDonald-Jensen
 </style>
 ## Tadhg McDonald-Jensen {#intro}
 
-It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin]. 
-<!-- (It is not Klingon) -->
+It is pronounced _Teague_ and means ["bard" or "poet" in gaelic][tadhgorigin]. (It is not Klingon)
 
 
 ## Contact and Online Profiles {#reachme}
-- [my contact card](tadhg.vcard)
+- [vcard v4](tadhg.vcard) (more detailed but probably won't work on your device)
+- [my contact card](tadhg.vcf) (for most devices)
 - Email: [tadhgmister@gmail.com](mailto:tadhgmister@gmail.com)
 - Texts and voicemail: [(343) 655-2007](tel:+13436552007)
 - [Stackoverflow]  top 2% overall by reputation
@@ -26,9 +26,9 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
           alt="profile for Tadhg McDonald-Jensen at Stack Overflow, Q&amp;A for professional and enthusiast programmers" 
           title="profile for Tadhg McDonald-Jensen at Stack Overflow, Q&amp;A for professional and enthusiast programmers"/>
 	    </picture> ][Stackoverflow] -->
-- [Github account](https://github.com/tadhgmister)
+- [Github](https://github.com/tadhgmister)
+- [Instagram](https://www.instagram.com/tadhgmister/)
 - [LinkedIn](https://www.linkedin.com/in/tadhg-mcdonald-jensen)
-<!-- - [facebook](https://www.facebook.com/tadhg.mcdonaldjensen/) -->
 
 ## Skills
 - Write clean, well documented code
@@ -72,8 +72,7 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 ## Interesting things I've done {#things-ive-done}
 - For the 4th year engineering project our team designed a wearable watch to collect biometrics, I wrote the [program to offload the data from the device and log / graph it for demonstration.][4thyearproject]
 - Designed circuits in [Logisim] and [made edits to the Java source code][logisimfix] to better support using it on an iPad
-- [Github issues for typescript][typescriptAuthored] that I've authored including a
-	  [viable proposal][tsInheritProposal] to one of typescripts longest outstanding limitations
+- [Github issues for typescript][typescriptAuthored] that I've authored including a [viable proposal][tsInheritProposal] to one of typescripts longest outstanding limitations
 - [Contributions to eslint-typescript][eslintTSAuthored] including an interesting case where the solution was to [educate the users][eslintTSEducate] instead of 'fixing' their code
 - [Solved an obscure python issue][pythonTBWith] where certain cases error messages would point to very misleading line numbers, the files linked [in this page][pythonTBWithCode] are the codes I wrote to fix the issue; other maintainers used this to fix the problem
 - [Submitted a python bug report][pythonAsyncExitErrorMsg] about misleading error messages and had to argue that it was a legitimate issue before it was corrected
@@ -90,20 +89,19 @@ It is pronounced _Teague_ and means ['bard' or 'poet' in gaelic][tadhgorigin].
 
 ## Interests and hobbies {#hobbies}
 - Paddler on the Carleton Dragonboat team
+- Regular at [Ottawa Swing Dance](https://www.swingottawa.ca/)
 - Rubix cube variants like the [super skewb](https://www.puzzlemaster.ca/browse/cubepuzzle/7774-skewb-xtreme-10-color-edition), the [ghost cube](https://ruwix.com/twisty-puzzles/3x3x3-rubiks-cube-shape-mods-variations/ghost-cube/), and a lot of others. I take pride in having never looked up any algorithms for any of these and enjoy finding interesting colour patterns once I found a solution 
 - Maintain a [GNU Guix configuration](https://github.com/tadhgmister/dotfiles) for my personal computer that is reproducible 
 - Juggling and the associated [mathematics](https://www.youtube.com/watch?v=7dwgusHjA0Y)
 - Casual but inventive puzzle video games like [Portal 2](https://www.thinkwithportals.com/about.php), [HyperRogue](https://zenorogue.itch.io/hyperrogue), [Toki Tori 2+](https://store.steampowered.com/app/201420/Toki_Tori_2/), and [Baba is You](https://store.steampowered.com/app/736260/Baba_Is_You/)
 - Didn't make but love to play [3D minesweeper with double the number of mines compared to the "hard" difficulty](http://egraether.com/mine3d/beta/?mainAlpha=0.9&hoverAlpha=0.6&grid=10,10,10,200&backgroundColor=#330000)
 - Board games like [Concept](https://boardgamegeek.com/boardgame/147151/concept). [Renegade](https://boardgamegeek.com/boardgame/170604/renegade), and [Resistance](https://boardgamegeek.com/boardgame/41114/resistance)
-<!-- - Snuggling with anyone who wants to cuddle back ;) -->
-- Regular at [Ottawa Swing Dance](https://www.swingottawa.ca/)  
-<!-- not sure you need to include the word scene with Ottawa Swing Dance -->
 - [Playlist of music I like](https://www.youtube.com/playlist?list=PLlbKEHjBs23Wha5AIzq34PapY_8PseQch)
 - Member of the [Carleton Improv Association](https://www.facebook.com/CarletonImprov/)
 - really want to be a DM for 5e dungeons and dragons but having anxiety issues so this is WIP
 - Rock climbing and ultimate frisbee (and to lesser extent beach volleyball) 
 <!-- - unicycling, backflips, swimming in wave pools-->
+<!-- - Snuggling with anyone who wants to cuddle back ;) -->
 
 Web comics I read and recommend
 

@@ -1,0 +1,18 @@
+BEGIN:VCARD
+VERSION:3.0
+SOURCE:https://tadhg.mcdj.solutions/tadhg.vcard
+URL;CHARSET=UTF-8:https://tadhg.mcdj.solutions
+PHOTO;MEDIATYPE=image/png;VALUE=URI:https://tadhg.mcdj.solutions/favicon.png
+FN;CHARSET=UTF-8:Tadhg McDonald-Jensen
+N;CHARSET=UTF-8:McDonald-Jensen;Tadhg;Matthew;;
+EMAIL;CHARSET=UTF-8;type=HOME,INTERNET:tadhgmister@gmail.com
+EMAIL;CHARSET=UTF-8;type=WORK,INTERNET:tadhgmcdonaldjensen@cmail.carleton.ca
+TEL;TYPE=CELL:3436552007
+TEL;TYPE=HOME,VOICE:6132498866
+IMPP:xmpp:lordtadhg@chatterboxtown.us
+ADR;CHARSET=UTF-8;TYPE=HOME:;;63 bramblegrove cres;Ottawa;Ontario;K1T3G2;Canada
+BDAY:19971227
+GENDER:M;agender
+TZ:America/Toronto
+REV:2024-07-22T14:02:53.625Z
+END:VCARD
