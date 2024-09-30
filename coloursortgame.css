@@ -1,0 +1,70 @@
+:root {
+    --ball-size: 50px;          /* Global variable for ball size */
+    /* --balls-per-tube: 6;       */
+}
+
+.GameBoard {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.Tube {
+    padding: 3px;
+    margin-inline: 5px;
+    margin-block: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+    border: 3px solid lightgrey; 
+    /* border-top: 0px; */
+    height: calc(var(--ball-size) * var(--balls-per-tube));
+    width: var(--ball-size); 
+}
+.Tube.active {
+    border-color: #333;
+}
+.Tube.free {
+    border-color: blueviolet;
+}
+
+.Ball {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    width: var(--ball-size); 
+    height: var(--ball-size); 
+}
+
+/* "red","blue","green","yellow", "magenta","cyan", "orange", "lime", "pink", "mediumpurple", "grey" */
+.Ball > span {
+    background-color: rgba(255,255,255,0.7);
+    padding: 3px;
+}
+
+.Ball.A { background-color: red; }
+.Ball.B { background-color: blue; }
+.Ball.C { background-color: lime; }
+.Ball.D { background-color: magenta; }
+.Ball.E { background-color: orange; }
+.Ball.F { background-color: yellow; }
+.Ball.G { background-color: lightseagreen; }
+.Ball.H { background-color: darkgreen; }
+.Ball.I { background-color: indigo; }
+.Ball.J { background-color: pink; }
+.Ball.K { background-color: mediumpurple; }
+.Ball.L { background-color: maroon; }
+.Ball.M { background-color: saddlebrown; }
+.Ball.N { background-color: grey; }
+
+@media (prefers-color-scheme: dark){
+    .Ball > span {
+        background-color: rgba(0,0,0,0.4);
+    }
+    /* invert the colours so darker stands out more */
+    .Tube.active {
+        border-color: lightgrey;
+    }
+    .Tube {
+        border-color: #333;
+    }
+}
