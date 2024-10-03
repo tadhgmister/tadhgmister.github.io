@@ -14,7 +14,11 @@
     flex-direction: row;
     flex-wrap: wrap;
 }
-
+.ActionButton {
+    min-height: 30pt;
+    min-width: 40pt;
+    margin: 5px
+}
 .Tube {
     padding: 3px;
     margin-inline: 5px;
