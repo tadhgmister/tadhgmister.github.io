@@ -382,6 +382,9 @@ class GameUI extends UIElement {
         this.undoButton.disabled = true;
         this.resetButton.disabled = true;
         this.serialBox = new InfoBox(parent, serializeGameState(initialState));
+        if (initialState.every(x => (x.capacity === initialState[0].capacity))) {
+            this.normalizeButton = new ActionButton(parent, "reorder tubes", () => { this.reorderTubes(); });
+        }
     }
     setState(newState) {
         assert(newState.length == this.tubes.length, "cannot change number of tubes with setState");
@@ -404,6 +407,9 @@ class GameUI extends UIElement {
     }
     checkIfWonAndUpdateSerialBox() {
         const serial = serializeGameState(this.state);
+        if (this.serialBox.content === serial) {
+            return; // if reordering stuff from solved state do not alert the user every time
+        }
         this.serialBox.content = serial;
         if (serial === this.solved) {
             this.alert("YOU WIN!");
@@ -439,6 +445,11 @@ class GameUI extends UIElement {
         else {
             alert("you are at the initial state".concat(this.undoStack.length > 0 ? " (you can still undo the reset)" : ""));
         }
+    }
+    reorderTubes() {
+        // note this doesn't touch undo stack, it just normalizes the stuff in place.
+        Tube.normalize(this.state);
+        this.setState(this.state);
     }
     alert(msg) {
         // set a small timeout so printing a message about a new state gives the dom time to update the display before printing the message
