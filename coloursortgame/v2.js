@@ -1,3 +1,4 @@
+import { gameSettings } from "./settings.js";
 function assert(condition, msg) {
     if (!condition) {
         throw new Error(msg);
@@ -9,7 +10,7 @@ class Tube {
         this.content = content;
         this.capacity = capacity;
     }
-    valueOf() { return this.content.concat(this.capacity.toString()); }
+    valueOf() { return this.capacity.toString().concat(this.content); }
     /**
      * returns the colour at the top of the tube
      * or undefined if the tube is empty
@@ -161,13 +162,13 @@ class Tube {
             }
         }
         tubes.sort((a, b) => {
-            if (a.content < b.content) {
+            if (a.valueOf() < b.valueOf()) {
                 return -1;
             }
-            else if (a.content === b.content) {
+            else if (a.valueOf() === b.valueOf()) {
                 return 0;
             }
-            else if (a.content > b.content) {
+            else if (a.valueOf() > b.valueOf()) {
                 return 1;
             }
             else {
@@ -269,16 +270,26 @@ function shuffleList(colorList) {
         [colorList[i], colorList[j]] = [colorList[j], colorList[i]];
     }
 }
+/**
+ * represents an element in the DOM
+ * if the tag is specified to the constructor it creates a new element that is a child of the parent
+ * if `null` is passed as the tag it uses the parent as this objects element.
+ */
 class UIElement {
     constructor(tag, parent) {
         var _a;
         // Determine the parent element: it can either be an HTMLElement or a UIElement (in which case, we take its element)
         const parentElement = parent instanceof UIElement ? parent.element : parent;
-        // Create a new DOM element of the type defined by the instance property
-        this.element = document.createElement(tag);
+        if (tag === null) {
+            this.element = parentElement;
+        }
+        else {
+            // Create a new DOM element of the type defined by the instance property
+            this.element = document.createElement(tag);
+            // Append the new element to the parent element
+            parentElement.appendChild(this.element);
+        }
         this.element.classList.add((_a = this.constructor.className) !== null && _a !== void 0 ? _a : this.constructor.name);
-        // Append the new element to the parent element
-        parentElement.appendChild(this.element);
     }
     // Method to delete the created DOM element
     delete() {
@@ -364,9 +375,20 @@ class TubeDiv extends UIElement {
     }
 }
 TubeDiv.className = "Tube";
+class AuxStuff extends UIElement {
+    constructor(parent, game, initialSerializedState) {
+        super(null, parent);
+        this.undoButton = new ActionButton(this, "undo", () => { game.undo(); });
+        this.undoButton.disabled = true;
+        this.resetButton = new ActionButton(this, "reset", () => { game.reset(); });
+        this.resetButton.disabled = true;
+        this.serialBox = new InfoBox(this, initialSerializedState);
+        this.serialBox.delete(); // TODO: remove this line
+    }
+}
 class GameUI extends UIElement {
-    constructor(parent, initialState, solved) {
-        super("main", parent);
+    constructor(mainElem, controlsElem, initialState, solved) {
+        super(null, mainElem);
         this.initialState = initialState;
         this.solved = solved;
         this.tubes = [];
@@ -377,14 +399,7 @@ class GameUI extends UIElement {
                 this.doAction(idx);
             }));
         }
-        this.undoButton = new ActionButton(parent, "undo", () => { this.undo(); });
-        this.resetButton = new ActionButton(parent, "reset", () => { this.reset(); });
-        this.undoButton.disabled = true;
-        this.resetButton.disabled = true;
-        this.serialBox = new InfoBox(parent, serializeGameState(initialState));
-        if (initialState.every(x => (x.capacity === initialState[0].capacity))) {
-            this.normalizeButton = new ActionButton(parent, "reorder tubes", () => { this.reorderTubes(); });
-        }
+        this.aux = new AuxStuff(controlsElem, this, serializeGameState(initialState));
     }
     setState(newState) {
         assert(newState.length == this.tubes.length, "cannot change number of tubes with setState");
@@ -392,8 +407,8 @@ class GameUI extends UIElement {
             div.setState(newState[idx]);
         }
         this.state = newState;
-        this.undoButton.disabled = this.undoStack.length === 0;
-        this.resetButton.disabled = this.state.every((tube, idx) => (this.initialState[idx].content === tube.content));
+        this.aux.undoButton.disabled = this.undoStack.length === 0;
+        this.aux.resetButton.disabled = this.state.every((tube, idx) => (this.initialState[idx].content === tube.content));
     }
     doAction(idx) {
         this.undoStack.push(this.state.slice());
@@ -407,10 +422,10 @@ class GameUI extends UIElement {
     }
     checkIfWonAndUpdateSerialBox() {
         const serial = serializeGameState(this.state);
-        if (this.serialBox.content === serial) {
+        if (this.aux.serialBox.content === serial) {
             return; // if reordering stuff from solved state do not alert the user every time
         }
-        this.serialBox.content = serial;
+        this.aux.serialBox.content = serial;
         if (serial === this.solved) {
             this.alert("YOU WIN!");
         }
@@ -457,25 +472,12 @@ class GameUI extends UIElement {
     }
 }
 GameUI.className = "GameBoard";
-function getUrlParameters() {
-    var _a, _b, _c, _d;
-    const urlParams = new URLSearchParams(window.location.search);
-    // Get ncolours from query, or default to 7 if not present
-    let ncolours = parseInt((_a = urlParams.get('ncolors')) !== null && _a !== void 0 ? _a : "") || 8;
-    if (ncolours > COLORS.length) {
-        ncolours = COLORS.length;
-    }
-    // Get ballspercolour from query, or default to 4 if not present
-    const ballsPerColour = parseInt((_b = urlParams.get('ballspercolor')) !== null && _b !== void 0 ? _b : "") || 4;
-    const emptyTubes = parseInt((_c = urlParams.get("empties")) !== null && _c !== void 0 ? _c : "") || 2;
-    const tubeCapacity = parseInt((_d = urlParams.get('emptysize')) !== null && _d !== void 0 ? _d : "") || ballsPerColour;
-    return { ncolours, ballsPerColour, emptyTubes, tubeCapacity };
-}
+export let game;
 export function initGame() {
-    const { ncolours, ballsPerColour, emptyTubes, tubeCapacity } = getUrlParameters();
-    const initialState = newGameBoard(ncolours, ballsPerColour, emptyTubes, tubeCapacity);
-    const solvedState = serializeGameState(makeSolvedGameBoard(ncolours, ballsPerColour, emptyTubes, tubeCapacity));
-    const game = new GameUI(document.body, initialState, solvedState);
+    const { nColors, ballsPerColor, empties, emptyPenalty } = gameSettings;
+    const initialState = newGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty);
+    const solvedState = serializeGameState(makeSolvedGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty));
+    game = new GameUI(document.getElementById("game"), document.getElementById("controls"), initialState, solvedState);
 }
 function serializeGameState(state) {
     const mutableStateCopy = state.slice();

@@ -17,5 +17,31 @@
     With the current implementation you are given a random level every time you refresh the page, it is not known whether the level presented will be solvable.
     You can change the settings with url query parameters like this: <a href="?ncolors=6&ballspercolor=6&empties=2&emptysize=5">?ncolors=6&ballspercolor=6&empties=2&emptysize=5</a>.
   </p>
+  <aside id="controls"></aside>
+  <main id="game"></main>
+  <form id="settingsForm" method="GET">
+    <p>
+      <input type="submit" value="New game with these settings">
+      <input type="reset" value="reset to default settings">
+    </p>
+    <p>
+      <label for="colours">Number of Colours</label>
+      <input type="number" id="colours" name="nColors" min="2" value="8">
+    </p>
+    <p>
+      <label for="ballsPerColour">Height of tubes (balls/colour)</label>
+      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" value="4">
+    </p>
+    <p>
+      <label for="emptyTubes">number of extra empty tubes</label>
+      <input type="number" id="emptyTubes" name="empties" min="2" value="2">
+    </p>
+    <p>
+      <label for="emptyTubeSize">empty tubes are this many tiles smaller</label>
+      <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" value="0">
+    </p>
+</form>
+
+
 </body>
 </html>
