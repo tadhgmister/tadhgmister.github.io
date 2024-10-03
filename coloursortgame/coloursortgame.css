@@ -2,6 +2,12 @@
     --ball-size: 50px;          /* Global variable for ball size */
     /* --balls-per-tube: 6;       */
 }
+.GraphManager {
+
+    width: 600px;
+    height: 400px;
+    display: block;
+}
 
 .GameBoard {
     display: flex;

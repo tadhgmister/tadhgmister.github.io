@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script type="module" src="v2.js" onload="import(this.src).then(module=>module.initGame())"></script>
   <meta charset="UTF-8">
   <meta name="color-scheme" content="light dark">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Move Tree</title>
   <link rel="stylesheet" href="coloursortgame.css">
 </head>
-<body onload="initgame()">
+<body>
   <h1>bubble sort game</h1>
   <p id="instructions"> 
     the goal of the game is to sort the bubbles so each vial only contains a single colour.
     Clicking on a vial will move the top bubbles to another vial with the same colour at the top or an empty vial if no partially full vials are available.
     Note that pressing the reset button can be undone.
     With the current implementation you are given a random level every time you refresh the page, it is not known whether the level presented will be solvable.
-    You can change the settings with url query parameters like this: <a href="coloursortgame.html?ncolors=4&ballspercolor=10&empties=3">?ncolors=4&ballspercolor=10&empties=3</a>.
+    You can change the settings with url query parameters like this: <a href="?ncolors=6&ballspercolor=6&empties=2&emptysize=5">?ncolors=6&ballspercolor=6&empties=2&emptysize=5</a>.
     Empty tubes or tubes that can be emptied into a tube with only that colour are highlighted vividly. Tubes that can be emptied into partially full tubes are highlighted less vividly.
 
   </p>
-  <script src="coloursortgame.js"></script> <!-- Your bundled script -->
 </body>
 </html>
