@@ -229,6 +229,7 @@ export function computeMove(tubes, idx) {
         // try to collect the colour in an empty tube if there are any
         for (const [ii, candidate] of backupState.entries()) {
             tubes[ii] = backupState[ii];
+            /// TODO: also consider candidates that have the same top colour for the total empty
             if (candidate.isEmpty) {
                 totalEmpty += candidate.capacity;
                 if (candidate.capacity >= topCount) {
@@ -568,7 +569,10 @@ class GameUI extends UIElement {
 GameUI.className = "GameBoard";
 export let game;
 export function initGame() {
-    const { nColors, ballsPerColor, empties, emptyPenalty, extraSlack } = gameSettings;
+    let { nColors, ballsPerColor, empties, emptyPenalty, extraSlack } = gameSettings;
+    if (nColors > COLORS.length) {
+        nColors = COLORS.length;
+    }
     const initialState = newGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack);
     const solvedState = serializeGameState(makeSolvedGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack));
     game = new GameUI(document.getElementById("game"), document.getElementById("controls"), initialState, solvedState);

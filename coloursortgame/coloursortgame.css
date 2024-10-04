@@ -13,6 +13,8 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
 }
 .ActionButton {
     min-height: 30pt;
@@ -21,14 +23,15 @@
 }
 .Tube {
     padding: 3px;
-    margin-inline: 5px;
-    margin-block: 10px;
+    margin-block: 5px;
     display: flex;
     flex-direction: column-reverse;
     border: 3px solid lightgrey; 
     /* border-top: 0px; */
     height: calc(var(--ball-size) * var(--balls-per-tube));
     width: var(--ball-size); 
+    max-width: 20vw;
+    max-height: 30vh;
 }
 .Tube.normal {
     border-color: #333;
@@ -50,8 +53,8 @@
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
-    width: var(--ball-size); 
-    height: var(--ball-size); 
+    width: 100%; 
+    height: calc(100%/var(--balls-per-tube));
     animation: ballDrop 0.5s ease-out forwards;
 }
 /* shroud logic, if there is a body with a checkbox with id #disableFog that is not checked then balls with shroud get this*/
