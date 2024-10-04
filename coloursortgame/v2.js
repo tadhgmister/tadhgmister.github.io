@@ -103,7 +103,7 @@ export class Tube {
      * @param others list of tubes to move colours into, is modified in place
      * @returns the new contents of this tube after moving the top colour into the other tubes
      */
-    moveToOthers(others) {
+    moveToOthers(others, ignoreEmpty = true) {
         const color = this.topColor;
         if (color === undefined) {
             return this;
@@ -112,7 +112,10 @@ export class Tube {
         let ballsLeftToMove = topCount;
         for (let idx = 0; idx < others.length && ballsLeftToMove > 0; idx++) {
             const dest = others[idx];
-            if (dest === this || dest.topColor !== color) {
+            // skip if destination is this tube or if it contains another colour
+            // note that dest.topColor would be undefined if it is empty so we only skip
+            // if it isn't empty (has another colour) or we are ignoring empty, otherwise this is a totally valid target.
+            if (dest === this || (dest.topColor !== color && (ignoreEmpty || !dest.isEmpty))) {
                 continue;
             } // the tube is another colour
             const slack = dest.slack;
@@ -222,15 +225,22 @@ export function computeMove(tubes, idx) {
     tubes[idx] = tubes[idx].moveToOthers(tubes);
     if (tubes[idx].topColor === col) {
         let idxOfEmpty;
+        let totalEmpty = 0;
         // try to collect the colour in an empty tube if there are any
         for (const [ii, candidate] of backupState.entries()) {
             tubes[ii] = backupState[ii];
-            if (candidate.isEmpty && candidate.capacity >= topCount) {
-                idxOfEmpty = ii;
+            if (candidate.isEmpty) {
+                totalEmpty += candidate.capacity;
+                if (candidate.capacity >= topCount) {
+                    idxOfEmpty = ii;
+                }
             }
         }
         if (idxOfEmpty !== undefined) {
             [tubes[idx], tubes[idxOfEmpty]] = tubes[idx].moveToEmpty(tubes[idxOfEmpty].capacity);
+        }
+        else if (totalEmpty >= topCount) {
+            tubes[idx] = tubes[idx].moveToOthers(tubes, false);
         }
     }
     return tubes[idx].topColor !== col;
