@@ -17,29 +17,39 @@
     With the current implementation you are given a random level every time you refresh the page, it is not known whether the level presented will be solvable.
     You can change the settings with url query parameters like this: <a href="?ncolors=6&ballspercolor=6&empties=2&emptysize=5">?ncolors=6&ballspercolor=6&empties=2&emptysize=5</a>.
   </p>
+
   <aside id="controls"></aside>
   <main id="game"></main>
+
   <form id="settingsForm" method="GET">
     <p>
-      <input type="submit" value="New game with these settings">
-      <input type="reset" value="reset to default settings">
+      <input type="checkbox" id="disableFog" name="disableFog" value="yes">
+      <label for="disableFog">disable fog</label>
     </p>
     <p>
-      <label for="colours">Number of Colours</label>
+      <input type="submit" value="New game with the following settings">
+    </p>
+    <p>
       <input type="number" id="colours" name="nColors" min="2" value="8">
+      <label for="colours">tubes to fill with colours</label>
     </p>
     <p>
-      <label for="ballsPerColour">Height of tubes (balls/colour)</label>
       <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" value="4">
+      <label for="ballsPerColour">balls per tube</label>
     </p>
     <p>
-      <label for="emptyTubes">number of extra empty tubes</label>
-      <input type="number" id="emptyTubes" name="empties" min="2" value="2">
+      <input type="number" id="emptyTubes" name="empties" min="0" value="2">
+      <label for="emptyTubes">empty tubes</label>
     </p>
     <p>
-      <label for="emptyTubeSize">empty tubes are this many tiles smaller</label>
       <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" value="0">
+      <label for="emptyTubeSize">less capacity in empty tubes</label>
     </p>
+    <p>
+      <input type="number" id="fullTubeGapBonus" name="extraSlack" min="0" value="0">
+      <label for="fullTubeGapBonus">more capacity in full tubes</label>
+    </p>
+    <input type="reset" value="reset to default settings">
 </form>
 
 

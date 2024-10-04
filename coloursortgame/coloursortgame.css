@@ -30,19 +30,41 @@
     height: calc(var(--ball-size) * var(--balls-per-tube));
     width: var(--ball-size); 
 }
-.Tube.active {
+.Tube.normal {
     border-color: #333;
 }
-.Tube.free {
+.Tube.pure, .Tube.empty {
     border-color: blueviolet;
 }
-
+@keyframes ballDrop {
+    from {
+        opacity: 0.1;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 .Ball {
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
     width: var(--ball-size); 
     height: var(--ball-size); 
+    animation: ballDrop 0.5s ease-out forwards;
+}
+/* shroud logic, if there is a body with a checkbox with id #disableFog that is not checked then balls with shroud get this*/
+body:has(#disableFog:not(:checked)) .Ball.shroud:before {
+    content: "?";
+    background-color: grey;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+body:has(#disableFog:not(:checked)) .Ball.shroud > span {
+    display: none;
 }
 
 /* "red","blue","green","yellow", "magenta","cyan", "orange", "lime", "pink", "mediumpurple", "grey" */
@@ -71,7 +93,7 @@
         background-color: rgba(0,0,0,0.4);
     }
     /* invert the colours so darker stands out more */
-    .Tube.active {
+    .Tube.normal {
         border-color: lightgrey;
     }
     .Tube {
