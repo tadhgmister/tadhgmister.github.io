@@ -471,27 +471,35 @@ class GameUI extends UIElement {
         if (!useful) {
             this.undoStack.pop(); // nothing changed so don't clutter the undo stack
         }
+        const skipLoseCheck = this.checkIfWonAndUpdateSerialBox();
         if (this.stateManager) {
             const details = this.stateManager.visitState(this.state);
-            if (details.getChildren().size <= 0) {
+            if (!skipLoseCheck && details.getChildren().size <= 0) {
                 this.indicateLost();
             }
         }
         else {
             this.setState(this.state);
-            this.checkIfLost();
+            if (!skipLoseCheck) {
+                this.checkIfLost();
+            }
         }
-        this.checkIfWonAndUpdateSerialBox();
     }
+    /**
+     *
+     * @returns true if the check for lost condition should be skipped
+     */
     checkIfWonAndUpdateSerialBox() {
         const serial = serializeGameState(this.state);
         if (this.aux.serialBox.content === serial) {
-            return; // if reordering stuff from solved state do not alert the user every time
+            return true; // if reordering stuff from solved state do not alert the user every time
         }
         this.aux.serialBox.content = serial;
         if (serial === this.solved) {
             this.alert("YOU WIN!");
+            return true;
         }
+        return false;
     }
     checkIfLost() {
         for (let idx = 0; idx < this.state.length; idx++) {
