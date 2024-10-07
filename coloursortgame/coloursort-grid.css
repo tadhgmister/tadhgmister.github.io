@@ -1,0 +1,128 @@
+:root {
+    --ball-size: 50px;
+    --tube-border-size: 3px;
+    --tube-padding-size: 3px;
+    --gap-size: 5px;
+}
+
+.ActionButton {
+    min-height: 30pt;
+    min-width: 40pt;
+    margin: 5px;
+}
+
+.GameBoard {
+    display: grid;
+    /* this should get immidiately overridden by the javascript resize listener, if it fails to get the proper number this is the effective default */
+    --n-rows: 10;
+    /* the main sizing constraints are here */
+    /* the column size maximum is the main width of the tubes including margin, the target is the minimum size for smaller screens and 
+    and the min is based on the width of the label + margins and border and padding etc to overrule the minimum screen portion if it would cutoff the labels */
+    grid-template-columns: repeat(auto-fill, clamp(2ch, 18vw, calc(var(--ball-size) + 2 * (var(--tube-border-size) + var(--tube-padding-size)))));
+    /* the rows roughly specify the height of the balls with some offset due to margins and borders of the tubes, the minimum is just a bit more than the height of the label to try to account for marigns
+    the default is some fraction of the screen divided by the calculated number of rows to keep the whole grid on the screen, and the maximum is the size that should be taken up if there is plenty of room on the screen
+    and the game doesn't need the full height (typical on desktop) */
+    grid-auto-rows: clamp(1.5em, calc(90vh / var(--n-rows)), var(--ball-size));
+    /* put good spaces around the tubes  */
+    justify-content: space-evenly;
+    /* take up full width of body (or other container) */
+    width: 100%;
+    column-gap: var(--gap-size);
+}
+
+.Tube {
+    /* tube spans over rows based on capacity */
+    grid-row-end: span var(--capacity);
+    /* display balls from bottom to top */
+    display: flex;
+    flex-direction: column-reverse;
+
+    padding: var(--tube-padding-size);
+    border: var(--tube-border-size) solid lightgrey;
+    /* will take up available space in width and height */
+    width: auto;
+    height: auto;
+    /* since tubes are all different heights we use margin-top for the vertical gaps instead of within grid, applying grid gaps would effectively put gaps between balls although because the balls are within tubes it just messes up spacing */
+    margin-top: var(--gap-size);
+
+}
+/* highlight tubes that can move to partial tubes */
+.Tube.normal {
+    border-color: #333;
+}
+/* TODO: ciaran didn't like the highlighting logic, maybe make it optional with a toggle like fog or make it more subtle */
+.Tube.pure, .Tube.empty {
+    border-color: blueviolet;
+}
+
+@keyframes ballDrop {
+    from {
+        opacity: 0.1;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: inherit;
+        transform: translateY(0);
+    }
+}
+.Ball {
+    display: flex;
+    /* center span containing label as much as possible */
+    justify-content: center; 
+    align-items: center; 
+    /* take up the full width of the tube and the fraction of the tube based on how many fit into this tube */
+    width: 100%; 
+    height: calc(100%/var(--capacity));
+    /* do a simple animation upon creation to draw attention to where they go. */
+    animation: ballDrop 0.5s ease-out forwards;
+    /* in the event the padding of the label would overlap with other balls hide it */
+    overflow: hidden;
+}
+/* shroud logic, if there is a body with a checkbox with id #disableFog that is not checked then balls with shroud get this*/
+body:has(#disableFog:not(:checked)) .Ball.shroud:before {
+    content: "?";
+    background-color: grey;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+body:has(#disableFog:not(:checked)) .Ball.shroud > span {
+    /* hide the span labeling the ball when it is shrouded */
+    display: none;
+}
+/* set a slightly transparent background over the label to improve contrast */
+.Ball > span {
+    background-color: rgba(255,255,255,0.7);
+    padding: 0.25em;
+}
+
+.Ball.A { background-color: red; }
+.Ball.B { background-color: blue; }
+.Ball.C { background-color: lime; }
+.Ball.D { background-color: magenta; }
+.Ball.E { background-color: orange; }
+.Ball.F { background-color: yellow; }
+.Ball.G { background-color: lightseagreen; }
+.Ball.H { background-color: darkgreen; }
+.Ball.I { background-color: indigo; }
+.Ball.J { background-color: pink; }
+.Ball.K { background-color: mediumpurple; }
+.Ball.L { background-color: maroon; }
+.Ball.M { background-color: saddlebrown; }
+.Ball.N { background-color: grey; }
+
+/* in dark theme reverse the colours to improve contrast */
+@media (prefers-color-scheme: dark){
+    .Ball > span {
+        background-color: rgba(0,0,0,0.4);
+    }
+    /* invert the colours so darker stands out more */
+    .Tube.normal {
+        border-color: lightgrey;
+    }
+    .Tube {
+        border-color: #333;
+    }
+}

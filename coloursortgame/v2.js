@@ -205,48 +205,114 @@ export class Tube {
     }
 }
 /**
- * executes a move on a game state.
- * This modifies the list of tubes in place even if the movement didn't accomplish anything
- * returns whether the top color of the selected tube changed.
- * @param tubes set of tubes to modify
- * @param capacity capacity of each tube
- * @param idx index of tube to empty
- * @returns true if the move changed the state
+ * helper called by computeMove, this is called twice, once with empty tubes and once with partially filled tubes
+ * so it is extracted to a helper. Being intended as a helper it sorts and removes items from candidateIdxs as is convinient for the algorithm
+ * also if the candidates don't have enough capacity this function will just throw un-useful errors as it is expected to be called within proper conditions
+ * @param tubes list of tubes to modify
+ * @param candidateIdxs list of indices to consider as targets, is mangled in the process of this function
+ * @param color the colour to add to candidates
+ * @param minElemsToMove the minimum number of balls to move to candidates
+ * @param maxElemsToMove the maximum number of balls to move
+ * @returns the number of balls successfully moved, when allowOverfill=false this should always be equal to minElemsToMove
  */
-export function computeMove(tubes, idx) {
-    // TODO: right now this tries to move to partial tubes, if it fails it moves ALL exposed balls of the colour to an empty tube
-    // which is probably undesirable but not strictly invalid game design choice. Will want to come back and change
-    // but may not bother until I have it working well on a touch screen where I care about the tappy taps.
-    const { topColor: col, topCount } = tubes[idx];
-    if (col === undefined) {
-        return false; // you tried to do a move from an empty tube, there is nothing to be done.
+function moveHelper(tubes, candidateIdxs, color, minElemsToMove, maxElemsToMove) {
+    let successfullyMoved = 0;
+    // sort in ascending order of slack so ones with most available space are at the end
+    candidateIdxs.sort((a, b) => tubes[a].slack - tubes[b].slack);
+    // as long as the one with most space can't fit all the balls we need to move:
+    while (tubes[candidateIdxs.at(-1)].slack < minElemsToMove - successfullyMoved) {
+        // pop it out of the list and fill it with balls
+        const idx = candidateIdxs.pop();
+        const slack = tubes[idx].slack;
+        successfullyMoved += slack;
+        tubes[idx] = tubes[idx].withAdded(color, slack);
     }
-    const backupState = tubes.slice();
-    tubes[idx] = tubes[idx].moveToOthers(tubes);
-    if (tubes[idx].topColor === col) {
-        let idxOfEmpty;
-        let totalEmpty = 0;
-        // try to collect the colour in an empty tube if there are any
-        for (const [ii, candidate] of backupState.entries()) {
-            tubes[ii] = backupState[ii];
-            /// TODO: also consider candidates that have the same top colour for the total empty
-            if (candidate.isEmpty) {
-                totalEmpty += candidate.capacity;
-                if (candidate.capacity >= topCount) {
-                    idxOfEmpty = ii;
-                }
+    // at this point we know the most slack candidate can hold the remaining balls,
+    // just go through the candidates and choose the first (least slack) that fits the remaining
+    for (const idx of candidateIdxs) {
+        if (tubes[idx].slack >= minElemsToMove - successfullyMoved) {
+            const countWeWantToMove = maxElemsToMove - successfullyMoved;
+            const countToActuallyMove = tubes[idx].slack < countWeWantToMove ? tubes[idx].slack : countWeWantToMove;
+            tubes[idx] = tubes[idx].withAdded(color, countToActuallyMove);
+            successfullyMoved += countToActuallyMove;
+            return successfullyMoved;
+        }
+    }
+    throw new Error("moveHelper was called with invalid state");
+}
+/**
+ * this movement algorithm uses the following goals:
+ * - use the fewest number of empty tubes required
+ * - make the fewest number of splits needed (distribute the balls amongst fewer tubes)
+ * - make the highest stacks, I.E. in case of multiple candidates for equal number of splits put it on the tallest one
+ *
+ * This modifies the list of tubes in place and returns the quality of the move:
+ * - UNMOVABLE if the list of tubes is unchanged and the move can't result in useful progress
+ * - NORMAL if the top colour of the selected tube can be shifted to other partially full tubes
+ * - DRAIN if at least one empty tube needed to be used for the contents being moved
+ *
+ * @param tubes list of tubes to modify in place as result of the computed move
+ * @param idxToDrain index of tube to try to shift into other tubes
+ * @returns the quality of move, see above for the cases
+ */
+export function computeMove(tubes, idxToDrain) {
+    const source = tubes[idxToDrain];
+    const col = source.topColor;
+    if (col === undefined) {
+        return "unmovable" /* MoveQuality.UNMOVABLE */; // tried to move an empty tube
+    }
+    const isSourcePure = source.isPure;
+    // first collect lists of partial tubes with slack and empties
+    const empties = [];
+    const partials = [];
+    // will count the total slack in the available partials
+    let partialsSlack = 0;
+    let emptySlack = 0;
+    for (const [idx, candidate] of tubes.entries()) {
+        if (idx === idxToDrain) {
+            continue;
+        } // skip own tube as possible candidate
+        // if the candidate is empty and the source is pure only consider the candidate if it has a different capacity
+        // this is because if you have several shorter empties you may need to move balls from a short empty to a taller one
+        // and if there is another short empty available the level is effectively softlocked as the algorithm will always prefer
+        // moving to an equivalent short empty instead of going to the necessary taller one to combine balls of the same colour
+        // in a single tube.
+        if (candidate.isEmpty && (!isSourcePure || candidate.capacity != source.capacity)) {
+            empties.push(idx);
+            emptySlack += candidate.capacity;
+        }
+        else if (candidate.topColor === col) {
+            const slack = candidate.slack;
+            if (slack > 0) {
+                partials.push(idx);
+                partialsSlack += slack;
             }
         }
-        if (idxOfEmpty !== undefined) {
-            [tubes[idx], tubes[idxOfEmpty]] = tubes[idx].moveToEmpty(tubes[idxOfEmpty].capacity);
-        }
-        else if (totalEmpty >= topCount) {
-            tubes[idx] = tubes[idx].moveToOthers(tubes, false);
-        }
     }
-    return tubes[idx].topColor !== col;
+    let result = "normal" /* MoveQuality.NORMAL */;
+    const topCount = source.topCount;
+    let toMoveCount = topCount;
+    if (toMoveCount > partialsSlack) {
+        const minNeededToGoToEmpties = toMoveCount - partialsSlack;
+        if (minNeededToGoToEmpties > emptySlack) {
+            // there is insufficient room in empty or partial tubes to hold all the balls we are trying to move
+            // most likely there are just no viable targets and no empty tubes
+            return "unmovable" /* MoveQuality.UNMOVABLE */;
+        }
+        result = "drain" /* MoveQuality.DRAIN */;
+        toMoveCount -= moveHelper(tubes, empties, col, minNeededToGoToEmpties, toMoveCount);
+    }
+    // if there is still stuff to move after possibly consulting empty tubes (could be in addition or instead of)
+    // then move everything else to partials
+    // we should be certain there is enough room as if there wasn't the toMoveCount would be lowered by empties
+    // and if there wasn't enough space in the empties then UNMOVABLE should have already been returned.
+    if (toMoveCount > 0) {
+        assert(toMoveCount === moveHelper(tubes, partials, col, toMoveCount, toMoveCount), "move failed somehow");
+    }
+    tubes[idxToDrain] = source.withTopRemoved(topCount);
+    return result;
 }
-const COLORS = "ABCDEFGHIJKLMNOP";
+const COLORS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*=+/";
 function makeSolvedGameBoard(n_colours, balls_per_colour, empty_tubes, empty_tube_capacity = balls_per_colour, extraSlack = 0) {
     const board = [];
     for (let idx = 0; idx < n_colours; idx++) {
@@ -376,7 +442,7 @@ class TubeDiv extends UIElement {
         if (tube.isEmpty) {
             this.element.classList.add("empty");
         }
-        this.element.style.setProperty("--balls-per-tube", tube.capacity.toString());
+        this.element.style.setProperty("--capacity", tube.capacity.toString());
         this.element.addEventListener("click", clickCallback);
         for (let idx = 0; idx < tube.content.length; idx++) {
             this.balls.push(new BallDiv(this, tube.content[idx], idx < tube.shroud));
@@ -451,11 +517,17 @@ class GameUI extends UIElement {
         this.shroudHeights = [];
         this.state = initialState.slice();
         for (const [idx, tube] of initialState.entries()) {
-            this.tubes.push(new TubeDiv(this, tube, ev => {
+            this.tubes.push(new TubeDiv(mainElem, tube, ev => {
                 this.doAction(idx);
             }));
             this.shroudHeights.push(tube.shroud);
         }
+        this.updateNRowsCSSVariableBasedOnMeasuredRows();
+        const resizeObserver = new ResizeObserver(() => {
+            // Recalculate row count when the container's size changes
+            this.updateNRowsCSSVariableBasedOnMeasuredRows();
+        });
+        resizeObserver.observe(this.element);
         this.aux = new AuxStuff(controlsElem, this, serializeGameState(initialState));
         import("./graphystuffs.js").then(module => {
             this.stateManager = new module.StateManager((s, d) => {
@@ -463,6 +535,11 @@ class GameUI extends UIElement {
             });
             this.stateManager.visitState(this.state); // do this to update highlighting
         });
+    }
+    updateNRowsCSSVariableBasedOnMeasuredRows() {
+        const nRows = getComputedStyle(this.element).getPropertyValue("grid-template-rows").split(" ");
+        console.log(nRows);
+        this.element.style.setProperty("--n-rows", nRows.length.toString());
     }
     setState(newState, details) {
         assert(newState.length == this.tubes.length, "cannot change number of tubes with setState");
@@ -478,9 +555,10 @@ class GameUI extends UIElement {
     }
     doAction(idx) {
         this.undoStack.push(this.state.slice());
-        const useful = computeMove(this.state, idx);
-        if (!useful) {
+        const quality = computeMove(this.state, idx);
+        if (quality === "unmovable" /* MoveQuality.UNMOVABLE */) {
             this.undoStack.pop(); // nothing changed so don't clutter the undo stack
+            return;
         }
         const skipLoseCheck = this.checkIfWonAndUpdateSerialBox();
         if (this.stateManager) {
@@ -514,7 +592,7 @@ class GameUI extends UIElement {
     }
     checkIfLost() {
         for (let idx = 0; idx < this.state.length; idx++) {
-            if (computeMove(this.state.slice(), idx)) {
+            if ("unmovable" /* MoveQuality.UNMOVABLE */ !== computeMove(this.state.slice(), idx)) {
                 return; // a move changes the state, have not lost yet
             }
         }

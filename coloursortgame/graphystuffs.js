@@ -1,4 +1,4 @@
-import { assert, computeMove, serializeGameState } from "./v2.js";
+import { computeMove, serializeGameState } from "./v2.js";
 class StateDetails {
     /**
      * @param id the serialized version of this state
@@ -24,12 +24,12 @@ class StateDetails {
                 continue;
             }
             const refState = this.lastSeen.slice();
-            const useful = computeMove(refState, idx);
-            if (!useful) {
+            const quality = computeMove(refState, idx);
+            if (quality === "unmovable" /* MoveQuality.UNMOVABLE */) {
                 continue;
             } // move didn't do anything
             const result = serializeGameState(refState);
-            this.childStates.set(content, { result, sampleState: refState, quality: moveQuality(this.lastSeen, refState, idx) });
+            this.childStates.set(content, { result, sampleState: refState, quality });
             this.callWhenComputingChildren(this.id, result, refState);
         }
         return this.childStates;
@@ -49,31 +49,28 @@ class StateDetails {
         this.lastSeen = state;
     }
 }
-function moveQuality(oldState, newState, triggerIdx) {
-    const col = oldState[triggerIdx].topColor;
-    assert(col !== undefined, "tried to get the quality of a move out of an empty tube");
-    for (const [idx, newTube] of newState.entries()) {
-        if (idx === triggerIdx) {
-            continue;
-        }
-        if (newTube.topColor === col && newTube.isPure) {
-            if (oldState[idx].isEmpty) {
-                // moved to a previously empty tube
-                return "drain" /* MoveQuality.DRAIN */;
-            }
-            else if (oldState[idx].topCount < newState[idx].topCount) {
-                // moved to a previously pure tube, note that if there are tubes of different heights
-                // then it is possible to need to split the contents between a pure tube and another
-                // as long as one pure tube increased in quantity we consider this a pure move
-                // I don't think this can happen unless the tubes are at least 2 units different in size but I haven't thought it through thoroughly enough to be sure.
-                assert(oldState[idx].isPure, "newState is pure but old state isn't????");
-                return "pure" /* MoveQuality.PURE */;
-            }
-        }
-    }
-    // otherwise we moved to partially full tubes
-    return "normal" /* MoveQuality.NORMAL */;
-}
+// function moveQuality(oldState: readonly Tube[], newState: readonly Tube[], triggerIdx:number): MoveQuality{
+//     const col = oldState[triggerIdx].topColor;
+//     assert(col !== undefined, "tried to get the quality of a move out of an empty tube")
+//     for(const [idx, newTube] of newState.entries()){
+//         if(idx===triggerIdx){continue;}
+//         if(newTube.topColor === col && newTube.isPure){
+//             if(oldState[idx].isEmpty){
+//                 // moved to a previously empty tube
+//                 return MoveQuality.DRAIN
+//             } else if(oldState[idx].topCount < newState[idx].topCount){
+//                 // moved to a previously pure tube, note that if there are tubes of different heights
+//                 // then it is possible to need to split the contents between a pure tube and another
+//                 // as long as one pure tube increased in quantity we consider this a pure move
+//                 // I don't think this can happen unless the tubes are at least 2 units different in size but I haven't thought it through thoroughly enough to be sure.
+//                 assert(oldState[idx].isPure, "newState is pure but old state isn't????")
+//                 return MoveQuality.PURE
+//             }
+//         }
+//     }
+//     // otherwise we moved to partially full tubes
+//     return MoveQuality.NORMAL;
+// }
 export class StateManager {
     constructor(visitCallback) {
         this.visitCallback = visitCallback;
