@@ -10,7 +10,12 @@
     min-width: 40pt;
     margin: 5px;
 }
-
+input[type=number] {
+    max-width: 7ch;
+    text-align: end;
+    float: left;
+    margin-right: 0.5ch;
+}
 .GameBoard {
     display: grid;
     /* this should get immidiately overridden by the javascript resize listener, if it fails to get the proper number this is the effective default */
@@ -23,6 +28,7 @@
     the default is some fraction of the screen divided by the calculated number of rows to keep the whole grid on the screen, and the maximum is the size that should be taken up if there is plenty of room on the screen
     and the game doesn't need the full height (typical on desktop) */
     grid-auto-rows: clamp(1.5em, calc(90vh / var(--n-rows)), var(--ball-size));
+    grid-auto-flow: dense;
     /* put good spaces around the tubes  */
     justify-content: space-evenly;
     /* take up full width of body (or other container) */

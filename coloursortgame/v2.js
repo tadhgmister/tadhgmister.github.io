@@ -539,7 +539,7 @@ class GameUI extends UIElement {
     }
     updateNRowsCSSVariableBasedOnMeasuredRows() {
         const nRows = getComputedStyle(this.element).getPropertyValue("grid-template-rows").split(" ");
-        console.log(nRows);
+        // console.log(nRows);
         this.element.style.setProperty("--n-rows", nRows.length.toString());
     }
     setState(newState, details) {
