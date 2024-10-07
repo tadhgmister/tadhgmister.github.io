@@ -313,6 +313,10 @@ export function computeMove(tubes, idxToDrain) {
         }
         result = "drain" /* MoveQuality.DRAIN */;
         toMoveCount -= moveHelper(tubes, empties, col, minNeededToGoToEmpties, toMoveCount);
+        if (isSourcePure && toMoveCount === 0) {
+            // all balls were moved to an empty tube
+            result = "shift" /* MoveQuality.SHIFT */;
+        }
     }
     // if there is still stuff to move after possibly consulting empty tubes (could be in addition or instead of)
     // then move everything else to partials
@@ -509,21 +513,21 @@ class TubeDiv extends UIElement {
 }
 TubeDiv.className = "Tube";
 class AuxStuff extends UIElement {
+    // public serialBox: InfoBox;
     constructor(parent, game, initialSerializedState) {
         super(null, parent);
         this.undoButton = new ActionButton(this, "undo", () => { game.undo(); });
         this.undoButton.disabled = true;
         this.resetButton = new ActionButton(this, "reset", () => { game.reset(); });
         this.resetButton.disabled = true;
-        this.serialBox = new InfoBox(this, initialSerializedState);
-        this.serialBox.delete(); // TODO: remove this line
+        // this.serialBox = new InfoBox(this, initialSerializedState);
+        // this.serialBox.delete(); // TODO: remove this line
     }
 }
 class GameUI extends UIElement {
-    constructor(mainElem, controlsElem, initialState, solved) {
+    constructor(mainElem, controlsElem, initialState) {
         super(null, mainElem);
         this.initialState = initialState;
-        this.solved = solved;
         this.tubes = [];
         this.undoStack = [];
         this.shroudHeights = [];
@@ -572,47 +576,46 @@ class GameUI extends UIElement {
             this.undoStack.pop(); // nothing changed so don't clutter the undo stack
             return;
         }
-        const skipLoseCheck = this.checkIfWonAndUpdateSerialBox();
+        let details = undefined;
         if (this.stateManager) {
-            const details = this.stateManager.visitState(this.state);
-            if (!skipLoseCheck && details.getChildren().size <= 0) {
-                this.indicateLost();
-            }
+            details = this.stateManager.visitState(this.state);
         }
         else {
             this.setState(this.state);
-            if (!skipLoseCheck) {
-                this.checkIfLost();
+        }
+        const isEnded = this.checkEnded(details);
+        if (isEnded === "lose") {
+            this.alert("no moves available, undo or reset.");
+        }
+        else if (isEnded === "win") {
+            this.alert("YOU WIN! <3");
+        }
+    }
+    *generateMoveQualities(details) {
+        if (details) {
+            for (const t of details.getChildren().values()) {
+                yield t.quality;
+            }
+        }
+        else {
+            for (let idx = 0; idx < this.state.length; idx++) {
+                yield computeMove(this.state.slice(), idx);
             }
         }
     }
-    /**
-     *
-     * @returns true if the check for lost condition should be skipped
-     */
-    checkIfWonAndUpdateSerialBox() {
-        const serial = serializeGameState(this.state);
-        if (this.aux.serialBox.content === serial) {
-            return true; // if reordering stuff from solved state do not alert the user every time
-        }
-        this.aux.serialBox.content = serial;
-        if (serial === this.solved) {
-            this.alert("YOU WIN!");
-            return true;
-        }
-        return false;
-    }
-    checkIfLost() {
-        for (let idx = 0; idx < this.state.length; idx++) {
-            if ("unmovable" /* MoveQuality.UNMOVABLE */ !== computeMove(this.state.slice(), idx)) {
-                return; // a move changes the state, have not lost yet
+    checkEnded(details) {
+        for (const q of this.generateMoveQualities(details)) {
+            if (q !== "shift" /* MoveQuality.SHIFT */ && q !== "unmovable" /* MoveQuality.UNMOVABLE */) {
+                return false;
             }
         }
-        this.indicateLost();
-    }
-    indicateLost() {
-        // every move did nothing, tell the user
-        this.alert("no moves available, undo or reset.");
+        // every move is not possible or a shift of pure tube to another empty tube, we are dsonaied
+        for (const tube of this.state) {
+            if (!tube.isPure) {
+                return "lose"; // no moves and there are mixed tubes
+            }
+        }
+        return "win"; // all tubes are pure and no moves meaningfully change the state
     }
     undo() {
         const state = this.undoStack.pop();
@@ -664,17 +667,13 @@ export function initGame() {
         nColors = COLORS.length;
     }
     let initialState;
-    let solvedState;
     if (levelCode) {
         initialState = levelCode.split(",").map(Tube.loadFromSerial);
-        alert("when using a level code you will not get an alert when the level is beaten");
-        solvedState = ""; // TODO: change how win condition is detected to allow arbitrary level codes to behave reasonably
     }
     else {
         initialState = newGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack);
-        solvedState = serializeGameState(makeSolvedGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack));
     }
-    game = new GameUI(document.getElementById("game"), document.getElementById("controls"), initialState, solvedState);
+    game = new GameUI(document.getElementById("game"), document.getElementById("controls"), initialState);
 }
 export function serializeGameState(state) {
     const mutableStateCopy = state.slice();
