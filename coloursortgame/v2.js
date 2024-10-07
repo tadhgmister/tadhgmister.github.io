@@ -1,3 +1,4 @@
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&dn=gpl-3.0.txt GPL-v3-or-Later
 import { gameSettings } from "./settings.js";
 export function assert(condition, msg) {
     if (!condition) {
@@ -660,3 +661,4 @@ export function serializeGameState(state) {
     Tube.normalize(mutableStateCopy);
     return mutableStateCopy.map(x => x.content.concat(x.capacity.toString())).join(",");
 }
+// @license-end

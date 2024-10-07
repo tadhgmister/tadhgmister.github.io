@@ -1,3 +1,4 @@
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&dn=gpl-3.0.txt GPL-v3-or-Later
 function isInputElement(element) {
     return element.tagName === "INPUT";
 }
@@ -64,3 +65,4 @@ export function initSettings(form, urlParams = window.location.search) {
     return result;
 }
 export const gameSettings = initSettings(document.getElementById('settingsForm'));
+// @license-end
