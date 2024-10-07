@@ -51,6 +51,7 @@ export function initSettings(form, urlParams = window.location.search) {
             // this means the form will reflect the state that was just submitted which makes it easier to make a few edits
             // and a reset input will still set everything back to default values 
             input.value = value;
+            input.dispatchEvent(new Event("change")); // trigger onchange listener if it exists
         }
         if (type === "number") {
             result[name] = parseFloat(value);

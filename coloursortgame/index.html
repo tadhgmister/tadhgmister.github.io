@@ -30,23 +30,23 @@
     </p>
     <p>
       <label for="colours">tubes to fill with colours</label>
-      <input type="number" id="colours" name="nColors" min="2" value="8">
+      <input type="number" id="colours" name="nColors" min="2" max="37" step="1" value="8">
     </p>
     <p>
       <label for="ballsPerColour">balls per tube</label>
-      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" value="4">
+      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" step="1" value="4" onchange="for(let id of ['emptyTubeSize', 'fullTubeGapBonus'].values()){document.getElementById(id).setAttribute('max', (this.value)-1)}">
     </p>
     <p>
       <label for="emptyTubes">empty tubes</label>
-      <input type="number" id="emptyTubes" name="empties" min="0" value="2">
+      <input type="number" id="emptyTubes" name="empties" min="0" step="1" value="2">
     </p>
     <p>
       <label for="emptyTubeSize">less capacity in empty tubes</label>
-      <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" value="0">
+      <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" step="1" value="0">
     </p>
     <p>
       <label for="fullTubeGapBonus">more capacity in full tubes</label>
-      <input type="number" id="fullTubeGapBonus" name="extraSlack" min="0" value="0">
+      <input type="number" id="fullTubeGapBonus" name="extraSlack" min="0" step="1" value="0">
     </p>
     <input type="reset" value="reset to default settings">
 </form>
