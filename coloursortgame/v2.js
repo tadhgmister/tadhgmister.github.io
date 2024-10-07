@@ -6,7 +6,18 @@ export function assert(condition, msg) {
     }
 }
 export class Tube {
-    //public static readonly EMPTY = new Tube("");
+    static loadFromSerial(serial) {
+        // Use a regular expression to separate the number and the rest of the string (non-numeric content)
+        const match = serial.match(/^(\d+)(.*)$/);
+        if (!match) {
+            throw new Error("Invalid serialized tube format");
+        }
+        // Extract the capacity as an integer and the rest as content
+        const capacity = parseInt(match[1], 10);
+        const content = match[2]; // This can contain any non-numeric characters
+        // Create and return a new Tube instance
+        return new Tube(content, capacity);
+    }
     constructor(content, capacity) {
         this.content = content;
         this.capacity = capacity;
@@ -648,17 +659,26 @@ class GameUI extends UIElement {
 GameUI.className = "GameBoard";
 export let game;
 export function initGame() {
-    let { nColors, ballsPerColor, empties, emptyPenalty, extraSlack } = gameSettings;
+    let { nColors, ballsPerColor, empties, emptyPenalty, extraSlack, levelCode } = gameSettings;
     if (nColors > COLORS.length) {
         nColors = COLORS.length;
     }
-    const initialState = newGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack);
-    const solvedState = serializeGameState(makeSolvedGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack));
+    let initialState;
+    let solvedState;
+    if (levelCode) {
+        initialState = levelCode.split(",").map(Tube.loadFromSerial);
+        alert("when using a level code you will not get an alert when the level is beaten");
+        solvedState = ""; // TODO: change how win condition is detected to allow arbitrary level codes to behave reasonably
+    }
+    else {
+        initialState = newGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack);
+        solvedState = serializeGameState(makeSolvedGameBoard(nColors, ballsPerColor, empties, ballsPerColor - emptyPenalty, extraSlack));
+    }
     game = new GameUI(document.getElementById("game"), document.getElementById("controls"), initialState, solvedState);
 }
 export function serializeGameState(state) {
     const mutableStateCopy = state.slice();
     Tube.normalize(mutableStateCopy);
-    return mutableStateCopy.map(x => x.content.concat(x.capacity.toString())).join(",");
+    return mutableStateCopy.map(x => `${x.capacity}${x.content}`).join(",");
 }
 // @license-end

@@ -117,7 +117,21 @@ body:has(#disableFog:not(:checked)) .Ball.shroud > span {
 .Ball.K { background-color: mediumpurple; }
 .Ball.L { background-color: maroon; }
 .Ball.M { background-color: saddlebrown; }
-.Ball.N { background-color: grey; }
+.Ball.N { background-color: slategrey; }
+.Ball.O {background-color: tan;}
+.Ball.P {background-color: aqua;}
+.Ball.Q {background: linear-gradient(to bottom, lime, blue);}
+.Ball.R {background: linear-gradient(to bottom right, aqua, magenta);}
+.Ball.S {background: linear-gradient(to right, blue, red);}
+.Ball.T {background: linear-gradient(to bottom left, magenta, yellow);}
+.Ball.U {background: linear-gradient(to right, red, lime);}
+.Ball.V {background: linear-gradient(to bottom left, yellow, aqua);}
+.Ball.W {background: linear-gradient(to bottom right, orange, purple);}
+.Ball.X {background: linear-gradient(to bottom, pink, indigo);}
+.Ball.Y {background: linear-gradient(to right ,magenta, red);}
+.Ball.Z {background: linear-gradient(to bottom left, green, purple);}
+
+
 
 /* in dark theme reverse the colours to improve contrast */
 @media (prefers-color-scheme: dark){

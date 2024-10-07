@@ -9,7 +9,7 @@ function isInputElement(element) {
  * which is returned
  * note that the generic argument must match the actual page, there is no way to statically check the types match up from a form written into
  * an html page.
- * Also note that only number and text inputs are supported.
+ * Also note that only some input types are supported based on my own needs
  * @param form html form to parse/update
  * @param urlParams argument to URLSearchParams, string or record containing parameters
  * @returns object containing parameters extracted from search query or defaults from the form
@@ -62,6 +62,14 @@ export function initSettings(form, urlParams = window.location.search) {
             }
             result[name] = value;
         }
+    }
+    // for any remaining values in params store it into result as well.
+    // note that repeated values probably won't work correctly, this would likely just store the first value then skip the rest as it is already present in result
+    for (const [k, v] of params.entries()) {
+        if (k in result) {
+            continue;
+        }
+        result[k] = v;
     }
     return result;
 }
