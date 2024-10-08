@@ -28,7 +28,7 @@ export function initSettings(form, urlParams = window.location.search) {
         }
         let value = params.get(name);
         if (type === "radio") {
-            alert("there is a radio button present in the settings html and that is not supported");
+            alert("there is a radio button present in the settings form and that is not supported");
             continue;
         }
         else if (type === "checkbox") {
