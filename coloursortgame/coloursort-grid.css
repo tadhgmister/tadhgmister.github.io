@@ -12,7 +12,7 @@
 }
 input[type=number] {
     max-width: 7ch;
-    text-align: end;
+    text-align: center;
     float: left;
     margin-right: 0.5ch;
 }
