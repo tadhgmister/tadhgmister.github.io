@@ -34,12 +34,13 @@ export function initSettings(form, urlParams = window.location.search) {
         else if (type === "checkbox") {
             // note that because of how submit works we really can't make the default to be checked
             if (input.checked) {
-                // it is theoretically possible for a user to check a box before this script finishes running but it is unlikely
-                // this is primarily intended for the developer
-                alert("checkbox is checked before running the parse settings, checkboxes cannot default to checked with this implementation");
+                console.error("checkbox is checked before running the parse settings, setting from url is ignored and default of true will always be used");
+                result[name] = true;
             }
-            // when the value is specified in url use `true` for both the data and initial state
-            result[name] = input.checked = (value !== null);
+            else {
+                // when the value is specified in url use `true` for both the data and initial state
+                result[name] = input.checked = (value !== null);
+            }
             continue;
         }
         else if (value === null) {

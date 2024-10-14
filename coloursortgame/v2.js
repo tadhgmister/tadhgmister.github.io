@@ -661,10 +661,13 @@ class GameUI extends UIElement {
 }
 GameUI.className = "GameBoard";
 export let game;
-export function initGame() {
+export function initGame(levelCodeOverride) {
     let { nColors, ballsPerColor, empties, emptyPenalty, extraSlack, levelCode } = gameSettings;
     if (nColors > COLORS.length) {
         nColors = COLORS.length;
+    }
+    if (levelCodeOverride) {
+        levelCode = levelCodeOverride;
     }
     let initialState;
     if (levelCode) {

@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>Colour Sort Game</title>
+  <meta name="author" value="Tadhg McDonald-Jensen">
   <script type="module" src="v2.js" onload="import(this.src).then(module=>module.initGame())"></script>
   <meta charset="UTF-8">
   <meta name="color-scheme" content="light dark">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Colour Sort Game</title>
   <link rel="stylesheet" href="coloursort-grid.css">
 </head>
 <body>
   <h1>Colour Sort Game</h1>
-  <p id="instructions"> 
-    the goal of the game is to sort the bubbles so each vial only contains a single colour.
-    Clicking on a vial will move the top bubbles to another vial with the same colour at the top or an empty vial if no partially full vials are available.
-    Note that pressing the reset button can be undone.
-    With the current implementation you are given a random level every time you refresh the page, it is not known whether the level presented will be solvable.
-  </p>
+  <a href="instructions1.html">go to instructions and examples</a>
 
   <aside id="controls"></aside>
   <main id="game"></main>
@@ -29,28 +25,29 @@
       <input type="submit" value="New game with the following settings">
     </p>
     <p>
-      <label for="colours">tubes to fill with colours</label>
+      <label for="colours">full tubes</label>
       <input type="number" id="colours" name="nColors" min="2" max="37" step="1" value="8">
-    </p>
-    <p>
-      <label for="ballsPerColour">balls per tube</label>
-      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" step="1" value="4" onchange="for(let id of ['emptyTubeSize', 'fullTubeGapBonus'].values()){document.getElementById(id).setAttribute('max', (this.value)-1)}">
     </p>
     <p>
       <label for="emptyTubes">empty tubes</label>
       <input type="number" id="emptyTubes" name="empties" min="0" step="1" value="2">
     </p>
     <p>
-      <label for="emptyTubeSize">less capacity in empty tubes</label>
-      <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" step="1" value="0">
+      <label for="ballsPerColour">blocks per tube</label>
+      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" step="1" value="4" onchange="for(let id of ['emptyTubeSize', 'fullTubeGapBonus'].values()){document.getElementById(id).setAttribute('max', (this.value)-1)}">
     </p>
     <p>
       <label for="fullTubeGapBonus">more capacity in full tubes</label>
       <input type="number" id="fullTubeGapBonus" name="extraSlack" min="0" step="1" value="0">
     </p>
+    <p>
+      <label for="emptyTubeSize">less capacity in empty tubes</label>
+      <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" step="1" value="0">
+    </p>
     <input type="reset" value="reset to default settings">
 </form>
 <section id="presets">
+  <h2>Presets</h2>
   <ul>
     <li><a href="index.html">
       Default settings

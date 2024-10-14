@@ -20,10 +20,11 @@ input[type=number] {
     display: grid;
     /* this should get immidiately overridden by the javascript resize listener, if it fails to get the proper number this is the effective default */
     --n-rows: 10;
+    --n-columns: auto-fill;
     /* the main sizing constraints are here */
     /* the column size maximum is the main width of the tubes including margin, the target is the minimum size for smaller screens and 
     and the min is based on the width of the label + margins and border and padding etc to overrule the minimum screen portion if it would cutoff the labels */
-    grid-template-columns: repeat(auto-fill, clamp(2ch, 18vw, calc(var(--ball-size) + 2 * (var(--tube-border-size) + var(--tube-padding-size)))));
+    grid-template-columns: repeat(var(--n-columns), clamp(2ch, 18vw, calc(var(--ball-size) + 2 * (var(--tube-border-size) + var(--tube-padding-size)))));
     /* the rows roughly specify the height of the balls with some offset due to margins and borders of the tubes, the minimum is just a bit more than the height of the label to try to account for marigns
     the default is some fraction of the screen divided by the calculated number of rows to keep the whole grid on the screen, and the maximum is the size that should be taken up if there is plenty of room on the screen
     and the game doesn't need the full height (typical on desktop) */
