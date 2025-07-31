@@ -56,10 +56,22 @@ input[type=number] {
     margin-top: var(--gap-size);
 
 }
+/* regarding alive and visited, mostly they come together so making it
+  double border and thicker is fairly subtle but if the user cheats
+  states will have alive but not visited and if they traverse dead
+  paths or find the winning path they will not be considered alive but will be visited.
+
+Having visited dead paths be doubled vs thicker and unexplored but
+known to be unexplored be thicker seems like the best combo to me */
 /* show thicker border around states that have been explicitly visited,. */
-.Tube.visited {
+.Tube.alive {
     border-width: calc(var(--tube-border-size) + var(--tube-padding-size));
     padding: 0;
+}
+/** if a state has been checked and not found to be dead but also hasn't been explicitly visited give a hue to the border */
+.Tube.visited {
+    border-style: double;
+    /* border-color: rgba(0,0,150, var(--border-transp)); */
 }
 /* unmovable tubes show as faded compared to normal */
 .Tube.unmovable {
@@ -67,11 +79,7 @@ input[type=number] {
 }
 /* drain moves that would take up an empty tube will be dashed */
 .Tube.drain {
-    --border-transp: 0.65;
-}
-/** if a state has been checked and not found to be dead but also hasn't been explicitly visited give a hue to the border */
-.Tube.alive {
-    border-color: rgba(0,150,255, var(--border-transp));
+    --border-transp: 0.7;
 }
 /* empty tubes will have a faint background to let them stand out a bit more */
 .Tube.empty {
@@ -79,10 +87,10 @@ input[type=number] {
 }
 /* if our game is ended show all tubes as winning, or individual ones*/
  .Tube.winning {
-    border-color: rgba(0,255,255,1);
+    border-color: rgba(0,240,150,1);
 }
  .GameBoard.ended.winning {
-     background-color: rgba(0,255,255,0.3);
+     background-color: rgba(0,240,150,0.3);
  }
 /** same deal with dead, except make sure dead doesn't override unmovable since they end up together */
 .Tube.dead:not(.unmovable) {
