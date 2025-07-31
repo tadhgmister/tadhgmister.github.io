@@ -38,6 +38,7 @@ input[type=number] {
 }
 
 .Tube {
+    --border-transp: 1;
     /* tube spans over rows based on capacity */
     grid-row-end: span var(--capacity);
     /* display balls from bottom to top */
@@ -45,7 +46,9 @@ input[type=number] {
     flex-direction: column-reverse;
 
     padding: var(--tube-padding-size);
-    border: var(--tube-border-size) solid lightgrey;
+    border-width: var(--tube-border-size);
+    border-style: solid;
+    border-color: rgba(0,0,0, var(--border-transp));
     /* will take up available space in width and height */
     width: auto;
     height: auto;
@@ -53,13 +56,40 @@ input[type=number] {
     margin-top: var(--gap-size);
 
 }
-/* highlight tubes that can move to partial tubes */
-.Tube.normal {
-    border-color: #333;
+/* show thicker border around states that have been explicitly visited,. */
+.Tube.visited {
+    border-width: calc(var(--tube-border-size) + var(--tube-padding-size));
+    padding: 0;
 }
-/* TODO: ciaran didn't like the highlighting logic, maybe make it optional with a toggle like fog or make it more subtle */
-.Tube.pure, .Tube.empty {
-    border-color: blueviolet;
+/* unmovable tubes show as faded compared to normal */
+.Tube.unmovable {
+    --border-transp: 0.1;
+}
+/* drain moves that would take up an empty tube will be dashed */
+.Tube.drain {
+    --border-transp: 0.65;
+}
+/** if a state has been checked and not found to be dead but also hasn't been explicitly visited give a hue to the border */
+.Tube.alive {
+    border-color: rgba(0,150,255, var(--border-transp));
+}
+/* empty tubes will have a faint background to let them stand out a bit more */
+.Tube.empty {
+    background-color: rgba(128,128,128, 0.2);
+}
+/* if our game is ended show all tubes as winning, or individual ones*/
+ .Tube.winning {
+    border-color: rgba(0,255,255,1);
+}
+ .GameBoard.ended.winning {
+     background-color: rgba(0,255,255,0.3);
+ }
+/** same deal with dead, except make sure dead doesn't override unmovable since they end up together */
+.Tube.dead:not(.unmovable) {
+    border-color: rgba(255,0,0,1);
+}
+.GameBoard.ended.dead {
+    background-color: rgba(255,0,0,0.3);
 }
 
 @keyframes ballDrop {
@@ -88,7 +118,7 @@ input[type=number] {
 /* shroud logic, if there is a body with a checkbox with id #disableFog that is not checked then balls with shroud get this*/
 body:has(#disableFog:not(:checked)) .Ball.shroud:before {
     content: "?";
-    background-color: grey;
+    background-color: lightgrey;
     display:flex;
     align-items: center;
     justify-content: center;
@@ -139,11 +169,11 @@ body:has(#disableFog:not(:checked)) .Ball.shroud > span {
     .Ball > span {
         background-color: rgba(0,0,0,0.4);
     }
-    /* invert the colours so darker stands out more */
-    .Tube.normal {
-        border-color: lightgrey;
-    }
     .Tube {
-        border-color: #333;
+	border-color: rgba(255,255,255, var(--border-transp));
+    }
+    body:has(#disableFog:not(:checked)) .Ball.shroud:before {
+	
+	background-color: #555;
     }
 }

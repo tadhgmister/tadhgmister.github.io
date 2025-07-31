@@ -1,3 +1,4 @@
 .tup
 node_modules
 dist/index.html
+dist/coloursortgame/*.js

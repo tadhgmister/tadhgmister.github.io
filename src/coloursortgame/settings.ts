@@ -2,6 +2,12 @@
 
 import { SerializedState } from "./v2";
 
+/**
+   gets the state manager to compute the child states one level down when visiting a state, meaning you get warned if a move will immidiately lead to a dead state even if you can't tell because of shroud
+   TODO make this UI configurable
+ */
+export const COMPUTE_CHILDREN_ON_VISIT = false;
+
 function isInputElement(element: Element): element is HTMLInputElement {
     return element.tagName === "INPUT";
 }

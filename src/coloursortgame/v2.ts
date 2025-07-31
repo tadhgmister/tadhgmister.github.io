@@ -1,12 +1,15 @@
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&dn=gpl-3.0.txt GPL-v3-or-Later
 
-import { MoveQuality, type StateDetails, TubeHighlight, StateManager } from "./graphystuffs.js";
+import { MoveQuality, type StateDetails, TubeHighlight, StateManager, StateUsefulness } from "./graphystuffs.js";
 import { gameSettings } from "./settings.js";
 
 export function assert(condition:boolean, msg:string): asserts condition{
     if(!condition){
         throw new Error(msg)
     }
+}
+export function assert_never(val: never, message:string){
+    throw Error(message)
 }
 /**
  * alias to string, represents a serialized and normalized game state
@@ -52,6 +55,8 @@ export class Tube {
     constructor(public readonly content: TubeContent, public readonly capacity: number){}
     /** returns a string with the content of the tube and the capacity. */
     public valueOf(): SerializedTube{return this.capacity.toString().concat(this.content);}
+    /** returns a string similar to valueOf but with duplicate entries of the top removed */
+    public valueOfStripped(): SerializedTube { return this.withTopRemoved(this.topCount-1).valueOf();}
     /**
      * returns the colour at the top of the tube
      * or undefined if the tube is empty
@@ -239,7 +244,10 @@ export class Tube {
  * @returns the number of balls successfully moved, when allowOverfill=false this should always be equal to minElemsToMove
  */
 function moveHelper(tubes: Tube[], candidateIdxs: number[], color: Color, minElemsToMove: number, maxElemsToMove: number){
+    /** number of elements moved */
     let successfullyMoved = 0;
+    /** number of tubes shifted to */
+    let candidatesUsed: Array<number> = [];
     // sort in ascending order of slack so ones with most available space are at the end
     candidateIdxs.sort((a,b)=>tubes[a].slack - tubes[b].slack);
     // as long as the one with most space can't fit all the balls we need to move:
@@ -248,6 +256,7 @@ function moveHelper(tubes: Tube[], candidateIdxs: number[], color: Color, minEle
         const idx = candidateIdxs.pop()!;
         const slack = tubes[idx].slack;
         successfullyMoved += slack;
+	candidatesUsed.push(idx);
         tubes[idx] = tubes[idx].withAdded(color, slack);
     }
     // at this point we know the most slack candidate can hold the remaining balls,
@@ -258,7 +267,8 @@ function moveHelper(tubes: Tube[], candidateIdxs: number[], color: Color, minEle
             const countToActuallyMove = tubes[idx].slack < countWeWantToMove ? tubes[idx].slack : countWeWantToMove; 
             tubes[idx] = tubes[idx].withAdded(color, countToActuallyMove);
             successfullyMoved += countToActuallyMove;
-            return successfullyMoved;
+	    candidatesUsed.push(idx);
+            return [successfullyMoved, candidatesUsed] as const;
         }
     }
     throw new Error("moveHelper was called with invalid state");
@@ -313,6 +323,8 @@ export function computeMove(tubes: Tube[], idxToDrain: number): MoveQuality {
     const topCount = source.topCount;
     let toMoveCount = topCount;
     if(toMoveCount > partialsSlack){
+	// we need to move more than there is space in partial tubes so some needs to go to empty tubes
+	// move as little as needed to empty tubes and the rest to partials
         const minNeededToGoToEmpties = toMoveCount - partialsSlack;
         if(minNeededToGoToEmpties > emptySlack){
             // there is insufficient room in empty or partial tubes to hold all the balls we are trying to move
@@ -320,10 +332,20 @@ export function computeMove(tubes: Tube[], idxToDrain: number): MoveQuality {
             return MoveQuality.UNMOVABLE;
         }
         result = MoveQuality.DRAIN;
-        toMoveCount -= moveHelper(tubes, empties, col, minNeededToGoToEmpties, toMoveCount);
+        const [elemsMoved,tubesUsed] =  moveHelper(tubes, empties, col, minNeededToGoToEmpties, toMoveCount);
+	toMoveCount -= elemsMoved;
         if(isSourcePure && toMoveCount === 0){
-            // all balls were moved to an empty tube
-            result = MoveQuality.SHIFT;
+	    // we moved from a pure tube to just empties, this
+	    // necessarily implies we have tubes with different sizes.
+	    // if we moved to a single other tube with larger capacity call it a PURE move where as
+	    // to a shorter or splitting up as a SHIFT in order to identify the winning condition.
+	    if(tubesUsed.length === 1 && tubes[tubesUsed[0]].capacity > source.capacity){
+		result = MoveQuality.PURE;
+	    } else {
+		// if we split to multiple shorter tubes or to a single shorter tube call this a SHIFT move,
+		// this is the only move type that is allowed from the win state.
+		result = MoveQuality.SHIFT;
+	    }
         }
     }
     // if there is still stuff to move after possibly consulting empty tubes (could be in addition or instead of)
@@ -331,7 +353,7 @@ export function computeMove(tubes: Tube[], idxToDrain: number): MoveQuality {
     // we should be certain there is enough room as if there wasn't the toMoveCount would be lowered by empties
     // and if there wasn't enough space in the empties then UNMOVABLE should have already been returned.
     if(toMoveCount > 0){
-        assert(toMoveCount === moveHelper(tubes, partials, col, toMoveCount, toMoveCount), "move failed somehow");
+        assert(toMoveCount === moveHelper(tubes, partials, col, toMoveCount, toMoveCount)[0], "move failed somehow");
     }
     tubes[idxToDrain] = source.withTopRemoved(topCount);
     return result;
@@ -473,11 +495,11 @@ class TubeDiv extends UIElement<"div">{
     public static className = "Tube"
     private balls: BallDiv[] = []
     private readonly capacity: number
-    private highlight: TubeHighlight = MoveQuality.DRAIN;
+    private highlight: TubeHighlight = [MoveQuality.DRAIN, StateUsefulness.UNKNOWN];
     constructor(parent: UIParent, tube: Tube, clickCallback: (this: HTMLDivElement, ev: MouseEvent) => void){
         super("div", parent);
         this.capacity = tube.capacity;
-        this.element.classList.add(this.highlight);
+        this.element.classList.add(...this.highlight);
         if(tube.isEmpty){this.element.classList.add("empty")}
         this.element.style.setProperty("--capacity", tube.capacity.toString());
         this.element.addEventListener("click", clickCallback)
@@ -518,10 +540,10 @@ class TubeDiv extends UIElement<"div">{
                 break;
             }
         }
-        this.element.classList.remove(this.highlight)
+        this.element.classList.remove(...this.highlight)
         if(details){
             this.highlight = details.getMoveStat(tube);
-            this.element.classList.add(this.highlight);
+            this.element.classList.add(...this.highlight);
             // if(!worked){
             //     console.error("tube highlight failed to be replaced", this)
             // }
@@ -534,27 +556,46 @@ class TubeDiv extends UIElement<"div">{
 class AuxStuff extends UIElement<null>{
     public undoButton: ActionButton;
     public resetButton: ActionButton;
-    // public serialBox: InfoBox;
+    public cheatButton: ActionButton;
+    public serialBox: InfoBox;
     constructor(parent: UIParent, game: GameUI, initialSerializedState:SerializedState){
         super(null, parent);
+	// make the serial box first so toggling between display ends up scrolling the undo button down
+	this.serialBox = new InfoBox(this, "");
         this.undoButton = new ActionButton(this, "undo", ()=>{game.undo()})
         this.undoButton.disabled = true;
         this.resetButton = new ActionButton(this, "reset", ()=>{game.reset()})
         this.resetButton.disabled = true;
+	this.cheatButton = new ActionButton(this, "cheat", ()=>{game.checkPaths()});
         // this.serialBox = new InfoBox(this, initialSerializedState);
         // this.serialBox.delete(); // TODO: remove this line
     }
 }
 class GameUI extends UIElement<null>{
     public static className = "GameBoard"
+    /** the collection of UI elements for the tubes */
     private tubes: TubeDiv[] = []
+    /** list of previous states that undo goes through */
     private undoStack: Tube[][] = [];
+    /** the current logical game state */
     private state: Tube[];
+    /** the box containing undo and redo buttons */
     private aux: AuxStuff;
+    /** optional state manager if the optional module is loaded */
     private stateManager?: StateManager;
     private shroudHeights: number[] = [];
+    /** the 'usefulness' of the current state, used to mark when you have won or lost
+      note that the initial value is */
+    private _usefulness = StateUsefulness.UNKNOWN;
+
+    private set usefulness(val: StateUsefulness){
+	this.element.classList.remove(this._usefulness);
+	this._usefulness = val;
+	this.element.classList.add(val);
+    }
     constructor(mainElem: HTMLElement, controlsElem: UIParent, private readonly initialState: Tube[]){
         super(null, mainElem);
+	this.element.classList.add(this._usefulness);
         this.state = initialState.slice();
         for(const [idx,tube] of initialState.entries()){
             this.tubes.push(new TubeDiv(mainElem, tube, ev=>{
@@ -584,6 +625,7 @@ class GameUI extends UIElement<null>{
     }
     private setState(newState: Tube[], details?: StateDetails){
         assert(newState.length == this.tubes.length, "cannot change number of tubes with setState")
+	this.info("")
         for(const [idx, div] of this.tubes.entries()){
             if(newState[idx].shroud < this.shroudHeights[idx]){
                 this.shroudHeights[idx] = newState[idx].shroud;
@@ -593,6 +635,14 @@ class GameUI extends UIElement<null>{
         this.state = newState;
         this.aux.undoButton.disabled = this.undoStack.length === 0;
         this.aux.resetButton.disabled = this.state.every((tube,idx)=>(this.initialState[idx].content === tube.content));
+	if(details){
+	    this.usefulness = details.usefulness;
+	    if(details.isEnd){
+		this.element.classList.add("ended");
+	    } else {
+		this.element.classList.remove("ended");
+	    }
+	}
     }
     private doAction(idx: number){
         this.undoStack.push(this.state.slice());
@@ -608,36 +658,38 @@ class GameUI extends UIElement<null>{
             this.setState(this.state);
         }
         const isEnded = this.checkEnded(details);
-        if(isEnded === "lose"){
-            this.alert("no moves available, undo or reset.");
-        } else if(isEnded === "win"){
+        if(isEnded === StateUsefulness.DEAD){
+	    this.info("no moves available, undo or reset.")
+        } else if(isEnded === StateUsefulness.WINNING){
             this.alert("YOU WIN! <3");
         }
     }
-    private *generateMoveQualities(details?: StateDetails){
-        if(details){
-            for(const t of details.getChildren().values()){
-                yield t.quality;
-            }
-        } else{
-            for(let idx=0;idx<this.state.length;idx++){
-                yield computeMove(this.state.slice(), idx);
-            }
+    /** fallback if state manager is not available, computes every move from current state and yields the quality of each move */
+    private *generateMoveQualities(){
+        for(let idx=0;idx<this.state.length;idx++){
+            yield computeMove(this.state.slice(), idx);
         }
+        
     }
-    private checkEnded(details?: StateDetails): false | "win" | "lose"{
-        for(const q of this.generateMoveQualities(details)){
-            if(q!==MoveQuality.SHIFT && q!== MoveQuality.UNMOVABLE){
-                return false;
+    /**
+     * returns either ALIVE, DEAD, or WINNING, to indicate not ended, lost, or won state respectively.
+     */
+    private checkEnded(details?: StateDetails): StateUsefulness {
+	if(details){
+	    return details.isEnd ? details.usefulness : StateUsefulness.ALIVE;
+	}
+        for(const q of this.generateMoveQualities()){
+            if(q !== MoveQuality.UNMOVABLE && q !==MoveQuality.SHIFT){
+                return StateUsefulness.ALIVE;
             }
         }
         // every move is not possible or a shift of pure tube to another empty tube, we are dsonaied
         for(const tube of this.state){
             if(!tube.isPure){
-                return "lose"; // no moves and there are mixed tubes
+                return StateUsefulness.DEAD; // no moves and there are mixed tubes
             }
         }
-        return "win"; // all tubes are pure and no moves meaningfully change the state
+        return StateUsefulness.WINNING; // all tubes are pure and no moves meaningfully change the state
     }
     public undo(){
         const state = this.undoStack.pop();
@@ -668,6 +720,20 @@ class GameUI extends UIElement<null>{
             this.alert ("you are at the initial state".concat(this.undoStack.length>0 ? " (you can still undo the reset)" : ""))
         }
     }
+    /**
+       uses the state manager to compute the states of all children of this state, or if they are already all computed all their children etc
+       can lead to finding the winning or dead paths without the user explicitly visiting them.
+       */
+    public checkPaths(){
+	if(this.stateManager === undefined){
+	    this.alert ("check paths only works if the state manager module is loaded");
+	    return;
+	}
+	const {details, depth} = this.stateManager.analyseState(this.state);
+	this.setState(this.state, details);
+	this.info(`explored to depth ${depth}`)
+	
+    }
     private reorderTubes(){
         // note this doesn't touch undo stack, it just normalizes the stuff in place.
         Tube.normalize(this.state);
@@ -676,6 +742,9 @@ class GameUI extends UIElement<null>{
     private alert(msg:string){
         // set a small timeout so printing a message about a new state gives the dom time to update the display before printing the message
         setTimeout(()=>{alert(msg)}, 200)
+    }
+    private info(msg: string){
+	this.aux.serialBox.content = msg;
     }
 }
 export let game: GameUI;

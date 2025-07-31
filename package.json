@@ -14,13 +14,14 @@
   "dependencies": {
     "cytoscape": "^3.30.2",
     "cytoscape-klay": "^3.1.4",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.6.2",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },
   "devDependencies": {
     "@types/cytoscape": "^3.21.8",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.2",
+    "typescript-language-server": "^4.3.4",
     "webpack-dev-server": "^5.1.0"
   }
 }
