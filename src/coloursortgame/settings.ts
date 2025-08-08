@@ -2,11 +2,6 @@
 
 import { SerializedState } from "./v2";
 
-/**
-   gets the state manager to compute the child states one level down when visiting a state, meaning you get warned if a move will immidiately lead to a dead state even if you can't tell because of shroud
-   TODO make this UI configurable
- */
-export const COMPUTE_CHILDREN_ON_VISIT = false;
 
 function isInputElement(element: Element): element is HTMLInputElement {
     return element.tagName === "INPUT";
@@ -24,7 +19,7 @@ function isInputElement(element: Element): element is HTMLInputElement {
  * @param urlParams argument to URLSearchParams, string or record containing parameters
  * @returns object containing parameters extracted from search query or defaults from the form
  */
-export function initSettings<T>(form: HTMLFormElement, urlParams: ConstructorParameters<typeof URLSearchParams>[0] = window.location.search) {
+export function initSettings<T = GameSettings>(form: HTMLFormElement =document.getElementById('settingsForm') as HTMLFormElement, urlParams: ConstructorParameters<typeof URLSearchParams>[0] = window.location.search) {
     const result: Record<string, string|number|boolean> = {};
     const params = new URLSearchParams(urlParams);
     // Iterate over each input field in the form
@@ -99,6 +94,6 @@ interface GameSettings {
     /** not present in form but may be specified, serialized level state to load */
     levelCode?: SerializedState;
 }
-export const gameSettings: GameSettings = initSettings<GameSettings>(document.getElementById('settingsForm') as HTMLFormElement);
+//export const gameSettings = initSettings();
 
 // @license-end

@@ -16,6 +16,12 @@ input[type=number] {
     float: left;
     margin-right: 0.5ch;
 }
+.GameBoard.solvable::after {
+    content: "solvable";
+}
+.GameBoard.impossible::after {
+    content: "impossible";
+}
 .GameBoard {
     display: grid;
     /* this should get immidiately overridden by the javascript resize listener, if it fails to get the proper number this is the effective default */
