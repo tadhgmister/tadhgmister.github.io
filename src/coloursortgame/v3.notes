@@ -1,0 +1,29 @@
+- combine Tube class and move handling with graphy stuff, seperate UI code so worker can easily import game logic without any dependency on UI code
+- have a "State" class that has some of the logic of StateDetails but is the connonical data structure to represent a state
+- define a "variant" data structure to denote list of modifications to undo normalization steps
+  - holds a map of tube index to count of top colour, as normalization redistributes amounts of stuff at the top of tubes of same colour
+    - index according to normalized state
+  - map of normalized index to index in variant,
+    - since each move typically just moves the one tube that the move was performed on, it may be possible to just store the reordering but it is unclear if it would be easy to cascade that from a variant of a parent state to a further variant of a child state
+- State holds a list of variants of the same state in the order they are discovered, so identical variants can reuse same memory
+  - if using index of variant it must be stored with a strong reference to the state as it may be GCed.
+- compute move logic should always keep in normalized state and optionally track variant info
+- change normalization to be convinient for computing moves, keep tubes with the same colour on top together, of tubes with same top colour sort based on rest of content below top then distribute extra balls to first ones.
+- have function to just yield tubes and move quality for all moves without actually computing any, by grouping tubes by top colour and counting slack this should be pretty easy.
+  - this means it is cheap to identify dead end states without having to try to compute all child states
+- undo stack holds pointers to state and variant index, no copying needed.
+- have analysis mark states with an empty tube, so moves that are known to lead to a non dead state with empty tubes can be highlighted
+- UI hints that should be captured:
+  - state lead ui hints are: "dead", "winning", "leads to empty" and normal
+  - move types are:
+    - normal - moves only to other partial tubes
+    - drain - move from partial tube to empty tube
+    - pure - moves pure tube content to a partial tube thus leading to a state with an empty tube or move to a taller empty tube
+    - shift - move pure tube content to shorter tubes, possibly splitting it up between an empty and partial or multiple shorter empties
+- GC optimizations
+  - due to logic of weakmap
+  - undoStack holds strong references to all visited states that can be visited again via undo
+  - Game holds strong reference to initial state (necessary for reset button)
+  - non dead states hold strong references to child states, once marked as dead child references become weak
+  - States uses weak pointers for parents (weak map with parent as key and move info as value)
+  - Game holds Map of ID to weakref to states, so dead states can GCed, if recreated when looked up by id it can be recreated and immidiately marked as dead

@@ -260,12 +260,12 @@ class MoveDetails {
 
 // type is exported as it is used by others but do not export constructor, these should only be managed
 // by the StateManager and retrieved and created through that exclusively.
-export type { StateDetails };
+//export type { StateDetails };
 /**
  * stores info about a state, the last seen variant of it and the child states.
  * The states are always using normalized version so lastSeen indicates the specific viewed game state that was visible to the user.
  */
-class StateDetails {
+export class StateDetails {
     /** 
      * holds possible moves that can be executed from this state
      * is computed on demand so the master list of states can create an entry for every state
@@ -298,7 +298,7 @@ class StateDetails {
         public readonly id: SerializedState, 
         private lastSeen: readonly Tube[],
 	/** callback that is invoked to retrieve a child state while they are being computed, @see{StateManager.newParentInfoCallback} */
-        private readonly callWhenComputingChildren: (parent: StateDetails, child: SerializedTube, refChildState: Tube[])=>StateDetails,
+        private readonly callWhenComputingChildren: (parent: StateDetails, move: SerializedTube, refChildState: Tube[])=>StateDetails,
 	/** callback invoked when a state which is dead or the won state  */
 	private readonly callWhenStateHasNoLiveChildren: (parents: StateDetails["parentStates"], dead_or_won: StateUsefulness.DEAD | StateUsefulness.WINNING) => void
     ){ }

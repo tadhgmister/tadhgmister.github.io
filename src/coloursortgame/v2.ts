@@ -203,6 +203,7 @@ export class Tube {
             } else if(a.valueOf() > b.valueOf()){
                 return 1;
             } else {
+		// if the function is not run with class instances which override the valueOf method this can be hit
                 throw new Error("everything is broken. abandon hope");
             }
         });
@@ -278,6 +279,9 @@ type UIParent = HTMLElement | UIElement<null | keyof HTMLElementTagNameMap>;
  * represents an element in the DOM
  * if the tag is specified to the constructor it creates a new element that is a child of the parent
  * if `null` is passed as the tag it uses the parent as this objects element.
+ *
+ * if subclasses define a static className attribute it is added as a css class,
+ * otherwise the name of the class is added as a css class.
  */
 class UIElement<tag extends null | keyof HTMLElementTagNameMap> {
 
@@ -285,19 +289,17 @@ class UIElement<tag extends null | keyof HTMLElementTagNameMap> {
     protected element: tag extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[tag] : HTMLElement;
 
     constructor(tag: tag, parent: UIParent) {
-    // Determine the parent element: it can either be an HTMLElement or a UIElement (in which case, we take its element)
-    const parentElement = parent instanceof UIElement ? parent.element : parent;
-    if(tag === null){
-        this.element = (parentElement as typeof this.element);
-    } else {
-        // Create a new DOM element of the type defined by the instance property
-        this.element = (document.createElement(tag) as typeof this.element);  
-        // Append the new element to the parent element
-        parentElement.appendChild(this.element);
-    }
-    this.element.classList.add((this.constructor as {className?:string}).className ?? this.constructor.name);
-
-    
+	// Determine the parent element: it can either be an HTMLElement or a UIElement (in which case, we take its element)
+	const parentElement = parent instanceof UIElement ? parent.element : parent;
+	if(tag === null){
+            this.element = (parentElement as typeof this.element);
+	} else {
+            // Create a new DOM element of the type defined by the instance property
+            this.element = (document.createElement(tag) as typeof this.element);  
+            // Append the new element to the parent element
+            parentElement.appendChild(this.element);
+	}
+	this.element.classList.add((this.constructor as {className?:string}).className ?? this.constructor.name);
     }
 
     // Method to delete the created DOM element
@@ -310,12 +312,30 @@ class UIElement<tag extends null | keyof HTMLElementTagNameMap> {
         newParent.element.appendChild(this.element);
     }
 }
+/**
+ * simple button with plain text label.
+ * @param label text label for the button
+ * @param callback a callback to run when the button is invoked,
+ *      if the callback returns a promise the button is disabled until the promise resolves (async function returns)
+ *      once the promise resolves the button is re-enabled unless the promise returns "disabled"
+ *      the button itself is passed as the second argument so changing label or disabling yourself without doing async can be done.
+ */
 class ActionButton extends UIElement<"button"> {
-    constructor(parent: UIParent, label: string, callback: ((this: GlobalEventHandlers, ev: MouseEvent) => void)){
+    constructor(parent: UIParent, label: string, callback: ((ev: MouseEvent,button: ActionButton) => void | Promise<void|undefined|"disabled">)){
         super("button", parent);
-        this.element.onclick = callback;
+        this.element.onclick = async (ev: MouseEvent)=>{
+	    const res = callback(ev, this);
+	    if(!isPromise(res)){
+		return; // non async function, no disabled handling
+	    }
+	    this.disabled = true;
+	    const awaited = await res;
+	    if(awaited !== "disabled"){
+		this.disabled = false;
+	    }
+	};
         this.element.innerText = label;
-        this.element.type = "button"
+        this.element.type = "button";
     }
     public get disabled(){
         return this.element.disabled;
@@ -339,7 +359,7 @@ class InfoBox extends UIElement<"p">{
 class BallDiv extends UIElement<"div"> {
     public static className = "Ball";
     public readonly color: Color;
-    constructor(parent: UIElement<any>, color: Color, shroud=false) {
+    constructor(parent: UIParent, color: Color, shroud=false) {
         // Call the UIElement constructor with the tag 'div'
         super('div', parent);
         const label = document.createElement("span")
@@ -368,9 +388,9 @@ class TubeDiv extends UIElement<"div">{
     constructor(parent: UIParent, tube: Tube, clickCallback: (this: HTMLDivElement, ev: MouseEvent) => void){
         super("div", parent);
         this.capacity = tube.capacity;
+        this.element.style.setProperty("--capacity", tube.capacity.toString());
         this.element.classList.add(...this.highlight);
         if(tube.isEmpty){this.element.classList.add("empty")}
-        this.element.style.setProperty("--capacity", tube.capacity.toString());
         this.element.addEventListener("click", clickCallback)
         for(let idx=0; idx<tube.content.length; idx++){
             this.balls.push(new BallDiv(this, tube.content[idx], idx<tube.shroud))
@@ -429,19 +449,14 @@ class AuxStuff extends UIElement<null>{
     public serialBox: InfoBox;
     constructor(parent: UIParent, game: GameUI, initialSerializedState:SerializedState){
         super(null, parent);
-	// make the serial box first so toggling between display ends up scrolling the undo button down
+	// without css put the serial first so it shows above the buttons
+	// with styling we set it to use the same line as the buttons if there is room.
 	this.serialBox = new InfoBox(this, "");
         this.undoButton = new ActionButton(this, "undo", ()=>{game.undo()})
         this.undoButton.disabled = true;
         this.resetButton = new ActionButton(this, "reset", ()=>{game.reset()})
         this.resetButton.disabled = true;
-	this.cheatButton = new ActionButton(this, "cheat", async ()=>{
-	    this.cheatButton.disabled = true;
-	    await game.checkPaths();
-	    this.cheatButton.disabled = false;
-	});
-        // this.serialBox = new InfoBox(this, initialSerializedState);
-        // this.serialBox.delete(); // TODO: remove this line
+	this.cheatButton = new ActionButton(this, "cheat", ()=> game.checkPaths());
     }
 }
 class GameUI extends UIElement<null>{
@@ -485,19 +500,21 @@ class GameUI extends UIElement<null>{
         this.aux = new AuxStuff(controlsElem, this, serializeGameState(initialState))
 
         import("./graphystuffs.js").then(module=>{
-            this.stateManager = new module.StateManager((s,d)=>{
-                this.setState(s.slice(), d);
-            })
-            this.stateManager.visitState(this.state); // do this to update highlighting
+            this.stateManager = new module.StateManager();
+            this.setState(this.state); // do this to update highlighting
         })
     }
+    /** callback for resize, inspects the actually used number of rows and sets it as css property to fit the screen well */
     private updateNRowsCSSVariableBasedOnMeasuredRows(){
         const nRows = getComputedStyle(this.element).getPropertyValue("grid-template-rows").split(" ");
         // console.log(nRows);
         this.element.style.setProperty("--n-rows", nRows.length.toString());
     }
-    private setState(newState: Tube[], details?: StateDetails){
-        assert(newState.length == this.tubes.length, "cannot change number of tubes with setState")
+    /** updates all the ui elements from changing the game state, most public methods call this */
+    private setState(newState: Tube[]){
+        assert(newState.length == this.tubes.length, "cannot change number of tubes with setState");
+	const details = this.stateManager?.visitState(this.state);
+	
 	this.info("")
         for(const [idx, div] of this.tubes.entries()){
             if(newState[idx].shroud < this.shroudHeights[idx]){
@@ -508,7 +525,7 @@ class GameUI extends UIElement<null>{
         this.state = newState;
         this.aux.undoButton.disabled = this.undoStack.length === 0;
         this.aux.resetButton.disabled = this.state.every((tube,idx)=>(this.initialState[idx].content === tube.content));
-	if(details){
+	if(details !== undefined){
 	    this.usefulness = details.usefulness;
 	    if(details.isEnd){
 		this.element.classList.add("ended");
@@ -516,7 +533,9 @@ class GameUI extends UIElement<null>{
 		this.element.classList.remove("ended");
 	    }
 	}
+	return details;
     }
+    /** callback for clicking on a tube, checks result state, pushes current state to undo stack, and updates state. */
     private doAction(idx: number){
         this.undoStack.push(this.state.slice());
         const quality =  computeMove(this.state, idx);
@@ -524,12 +543,8 @@ class GameUI extends UIElement<null>{
             this.undoStack.pop(); // nothing changed so don't clutter the undo stack
             return;
         }
-        let details: StateDetails | undefined = undefined;
-        if(this.stateManager){
-            details = this.stateManager.visitState(this.state);
-        } else {
-            this.setState(this.state);
-        }
+        const details = this.setState(this.state);
+        
         const isEnded = this.checkEnded(details);
         if(isEnded === StateUsefulness.DEAD){
 	    this.info("no moves available, undo or reset.")
@@ -551,31 +566,44 @@ class GameUI extends UIElement<null>{
 	if(details){
 	    return details.isEnd ? details.usefulness : StateUsefulness.ALIVE;
 	}
+	// fallback if we don't have state manager
+	// TODO implement this simpler logic into StateDetails.computeMoves as it is easier to follow
+
+	// if all tubes are pure we ignore SHIFT moves as that is possible from a win state
+	// otherwise 
+	const winning = this.state.every((t=>t.isPure));
         for(const q of this.generateMoveQualities()){
-            if(q !== MoveQuality.UNMOVABLE && q !==MoveQuality.SHIFT){
-                return StateUsefulness.ALIVE;
+            if(q === MoveQuality.UNMOVABLE){
+		continue; // unmovable so not an indicator of alive
+	    }else if(winning && q === MoveQuality.SHIFT){
+		continue; // if all tubes are pure shift moves are ignored for win check
             }
+	    // otherwise we have a viable move so we are in alive state.
+	    return StateUsefulness.ALIVE;
         }
-        // every move is not possible or a shift of pure tube to another empty tube, we are dsonaied
-        for(const tube of this.state){
-            if(!tube.isPure){
-                return StateUsefulness.DEAD; // no moves and there are mixed tubes
-            }
-        }
-        return StateUsefulness.WINNING; // all tubes are pure and no moves meaningfully change the state
+	// either we have no moves or we have shift moves but all tubes are pure so we have won, either way this is the end
+	return winning ? StateUsefulness.WINNING : StateUsefulness.DEAD;
     }
+    /**
+     * performs an undo, popping a state off the undo stack and going to that state.
+     * if the undoStack is empty gives an alert that it is not possible but in proper
+     * operation the undo button should be disabled if this would fail.
+     */
     public undo(){
         const state = this.undoStack.pop();
+	// shouldn't happen as setState disables the undo button when undoStack is empty
         if(state === undefined){
             this.alert("you are at the initial state")
             return;
         }
-        if(this.stateManager){
-            this.stateManager.visitState(state);
-        } else{
-            this.setState(state)
-        }
+        this.setState(state);
     }
+    /**
+     * resets to the initial state, adding the current state to the undo stack so it can be undone
+     *
+     * if we are currently in the initial state give an alert indicating although normally the reset button should be
+     * disabled if it wouldn't be a valid operation.
+     */
     public reset(){
         if(this.state.some((tube,idx)=>{
             const val = (tube.content !== this.initialState[idx].content);
@@ -584,12 +612,9 @@ class GameUI extends UIElement<null>{
             // state has changed so actually perform reset
             const newState = this.initialState.slice();
             this.undoStack.push(this.state);
-            if(this.stateManager){
-                this.stateManager.visitState(newState);
-            } else{
-                this.setState(newState)
-            }
+            this.setState(newState);
         } else {
+	    // shouldn't happen as setState disables reset button when we are in the initial state.
             this.alert ("you are at the initial state".concat(this.undoStack.length>0 ? " (you can still undo the reset)" : ""))
         }
     }
@@ -607,20 +632,26 @@ class GameUI extends UIElement<null>{
 	// call setState to potentially update classes based on new info if details changes
 	// but only if the state didn't change
 	if(this.state === stateToAnalyse){
-	    this.setState(stateToAnalyse, details);
+	    this.setState(this.state);
 	}
 	this.info(msg)
 	
     }
-    private reorderTubes(){
+    /**
+     * reorders the tubes according to the normalization that identifies common states.
+     * performs this in place without affecting the undo stack
+     */
+    public reorderTubes(){
         // note this doesn't touch undo stack, it just normalizes the stuff in place.
         Tube.normalize(this.state);
         this.setState(this.state);
     }
+    /** gives a user alert with a small delay to allow UI to update before it is frozen by the dialog */
     private alert(msg:string){
         // set a small timeout so printing a message about a new state gives the dom time to update the display before printing the message
         setTimeout(()=>{alert(msg)}, 200)
     }
+    /** shows some transient message on the screen where it can be easily ignored */
     private info(msg: string){
 	this.aux.serialBox.content = msg;
     }
@@ -643,13 +674,13 @@ export function initGame(levelCodeOverride?: SerializedState){
         initialState = newGameBoard(nColors, ballsPerColor, empties, ballsPerColor-emptyPenalty, extraSlack);
     }
     const gameDiv = document.getElementById("game")!;
-    worker.delegate("checkSolvability", initialState.map(x=>x.valueOf())).then((solvable)=>{
-	if(solvable){
+    worker.delegate("checkSolvability", initialState.map(x=>x.valueOf())).then((v)=>{
+	if(v.solvable){
 	    gameDiv.classList.add("solvable");
 	    console.log("the game is solvable");
 	} else{
 	    gameDiv.classList.add("impossible");
-	    alert("this game is not solvable, refresh the page for a new one");
+	    alert(`This game is not solvable, refresh the page for a new one. (game has ${v.states} states.)`);
 	}
     });
     game = new GameUI(gameDiv, document.getElementById("controls")!, initialState);
@@ -658,5 +689,8 @@ export function serializeGameState(state: readonly Tube[]): SerializedState{
     const mutableStateCopy = state.slice();
     Tube.normalize(mutableStateCopy);
     return mutableStateCopy.map(x=>`${x.capacity}${x.content}`).join(",");
+}
+function isPromise(val:unknown): val is Promise<unknown>{
+    return "function" === typeof (val as Promise<unknown>).then
 }
 // @license-end

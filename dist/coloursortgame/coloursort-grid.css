@@ -4,24 +4,43 @@
     --tube-padding-size: 3px;
     --gap-size: 5px;
 }
-
+/** ensure buttons have a reasonable minimum size so they are easy to click on */
 .ActionButton {
     min-height: 30pt;
     min-width: 40pt;
     margin: 5px;
 }
+
+.AuxStuff {
+    /* leave a gap between buttons and link to instructions */
+    margin-top: 1em;
+    display: flex;
+    /* get the info box to wrap upwards, assuming it is set to the end*/
+    flex-flow: row wrap-reverse;
+}
+.AuxStuff .InfoBox {
+    flex-grow: 1;
+    /* if styling is disabled the info box is set first in the html, with
+   styling we want to display it after the buttons if there is room on
+   the same line or on the line above if not, so set order to move it
+   after the buttons */
+    order: 1; 
+}
+/* all inputs in our game settings form, if other inputs are added later this should add #settingsForm as the parent */
 input[type=number] {
+    /* some platforms make number inputs super wide, we expect maybe 2 digits in ours */
     max-width: 7ch;
+    /* I'd like to right align them so with the label it reads like a sentence but that means the cursor always ends up before the number which makes it annoying to delete and replace*/
     text-align: center;
+    /* for accessibility reasons the label is always before the input in the html, but visually editing it is easier if they are all on the left*/
     float: left;
+    /* margin to space it from the label when it gets floated to the left */
     margin-right: 0.5ch;
 }
-.GameBoard.solvable::after {
-    content: "solvable";
-}
-.GameBoard.impossible::after {
-    content: "impossible";
-}
+/** TODO: probably do better labeling of solvable or impossible than just shoving some text in the grid */
+.GameBoard.solvable::after  { content: "solvable";}
+.GameBoard.impossible::after {content: "impossible";}
+
 .GameBoard {
     display: grid;
     /* this should get immidiately overridden by the javascript resize listener, if it fails to get the proper number this is the effective default */
@@ -54,7 +73,7 @@ input[type=number] {
     padding: var(--tube-padding-size);
     border-width: var(--tube-border-size);
     border-style: solid;
-    border-color: rgba(0,0,0, var(--border-transp));
+    border-color: light-dark(rgba(0,0,0, var(--border-transp)), rgba(255,255,255, var(--border-transp)));
     /* will take up available space in width and height */
     width: auto;
     height: auto;
@@ -132,7 +151,7 @@ known to be unexplored be thicker seems like the best combo to me */
 /* shroud logic, if there is a body with a checkbox with id #disableFog that is not checked then balls with shroud get this*/
 body:has(#disableFog:not(:checked)) .Ball.shroud:before {
     content: "?";
-    background-color: lightgrey;
+    background-color: light-dark(lightgrey, #555);
     display:flex;
     align-items: center;
     justify-content: center;
@@ -140,12 +159,14 @@ body:has(#disableFog:not(:checked)) .Ball.shroud:before {
     height: 100%;
 }
 body:has(#disableFog:not(:checked)) .Ball.shroud > span {
-    /* hide the span labeling the ball when it is shrouded */
+    /* hide the span labeling the ball when it is shrouded, the :before
+   would cover it visually but copy/paste or accessibility stuff could
+   still interact with it */
     display: none;
 }
 /* set a slightly transparent background over the label to improve contrast */
 .Ball > span {
-    background-color: rgba(255,255,255,0.7);
+    background-color: light-dark(rgba(255,255,255,0.7), rgba(0,0,0,0.4));
     padding: 0.25em;
 }
 
@@ -176,18 +197,3 @@ body:has(#disableFog:not(:checked)) .Ball.shroud > span {
 .Ball.Y {background: linear-gradient(to right ,magenta, red);}
 .Ball.Z {background: linear-gradient(to bottom left, green, purple);}
 
-
-
-/* in dark theme reverse the colours to improve contrast */
-@media (prefers-color-scheme: dark){
-    .Ball > span {
-        background-color: rgba(0,0,0,0.4);
-    }
-    .Tube {
-	border-color: rgba(255,255,255, var(--border-transp));
-    }
-    body:has(#disableFog:not(:checked)) .Ball.shroud:before {
-	
-	background-color: #555;
-    }
-}
