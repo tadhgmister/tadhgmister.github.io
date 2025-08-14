@@ -2,7 +2,7 @@
 
 import { MoveQuality, type StateDetails, TubeHighlight, StateManager, StateUsefulness, computeMove } from "./graphystuffs.js";
 import { initSettings } from "./settings.js";
-import { assert, WorkerWrapper } from "./commonHelpers.js";
+import { assert, sleep, WorkerWrapper } from "./commonHelpers.js";
 import type { Handlers } from "./worker.js";
 
 /**
@@ -452,7 +452,7 @@ class AuxStuff extends UIElement<null>{
 	// without css put the serial first so it shows above the buttons
 	// with styling we set it to use the same line as the buttons if there is room.
 	this.serialBox = new InfoBox(this, "");
-        this.undoButton = new ActionButton(this, "undo", ()=>{game.undo()})
+        this.undoButton = new ActionButton(this, "undo", ()=>game.undoUntilLive())
         this.undoButton.disabled = true;
         this.resetButton = new ActionButton(this, "reset", ()=>{game.reset()})
         this.resetButton.disabled = true;
@@ -475,7 +475,7 @@ class GameUI extends UIElement<null>{
     /** the 'usefulness' of the current state, used to mark when you have won or lost
       note that the initial value is */
     private _usefulness = StateUsefulness.UNKNOWN;
-
+    private get usefulness(){return this._usefulness;}
     private set usefulness(val: StateUsefulness){
 	this.element.classList.remove(this._usefulness);
 	this._usefulness = val;
@@ -523,7 +523,9 @@ class GameUI extends UIElement<null>{
             div.setState(newState[idx], this.shroudHeights[idx], details);
         }
         this.state = newState;
-        this.aux.undoButton.disabled = this.undoStack.length === 0;
+	if(!this.isActivelyDoingLiveUndo){
+            this.aux.undoButton.disabled = this.undoStack.length === 0;
+	}
         this.aux.resetButton.disabled = this.state.every((tube,idx)=>(this.initialState[idx].content === tube.content));
 	if(details !== undefined){
 	    this.usefulness = details.usefulness;
@@ -590,7 +592,7 @@ class GameUI extends UIElement<null>{
      * if the undoStack is empty gives an alert that it is not possible but in proper
      * operation the undo button should be disabled if this would fail.
      */
-    public undo(){
+    public undo(disableButtonAfter=true){
         const state = this.undoStack.pop();
 	// shouldn't happen as setState disables the undo button when undoStack is empty
         if(state === undefined){
@@ -598,6 +600,29 @@ class GameUI extends UIElement<null>{
             return;
         }
         this.setState(state);
+    }
+    private isActivelyDoingLiveUndo = false;
+    /**
+     * undo in a loop until reaching a live state
+     */
+    public async undoUntilLive(): Promise<"disabled"|undefined>{
+	assert(!this.isActivelyDoingLiveUndo, "assumption that action button disable logic prevents multiple undo chains is broken");
+	this.isActivelyDoingLiveUndo = true;
+	try{
+	    this.undo();
+	    while(this.usefulness === StateUsefulness.DEAD && this.undoStack.length > 0){
+		const currentState = this.state;
+		await sleep(400);
+		if(currentState !== this.state){
+		    return; // user changed state mid undo, just stop trying to undo
+		    // this also implies that the undo button will be clickable again, it is possible this is wrong but should be fine
+		}
+		this.undo();
+	    }
+	    return (this.undoStack.length === 0) ? "disabled" : undefined;
+	} finally {
+	    this.isActivelyDoingLiveUndo = false;
+	}
     }
     /**
      * resets to the initial state, adding the current state to the undo stack so it can be undone

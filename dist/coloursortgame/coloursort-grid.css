@@ -103,7 +103,7 @@ known to be unexplored be thicker seems like the best combo to me */
     --border-transp: 0.1;
 }
 /* drain moves that would take up an empty tube will be dashed */
-.Tube.drain {
+.Tube.drain, .Tube.shift {
     --border-transp: 0.7;
 }
 /* empty tubes will have a faint background to let them stand out a bit more */

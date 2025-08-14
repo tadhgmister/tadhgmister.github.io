@@ -1,10 +1,22 @@
+/**
+ * asserts a condition, useful for typesafety
+ */
 export function assert(condition:boolean, msg:string): asserts condition {
     if(!condition){
         throw new Error(msg);
     }
 }
-export function assert_never(val: never, message:string){
+/**
+ * if executed this throws a runtime error with the given message, if
+ * typescript believes this function can be reached with a value
+ * (first argument) that has a useful value.
+ */
+export function assert_never(_val: never, message:string){
     throw Error(message);
+}
+/** returns a promise that resolves after the specified number of milliseconds */
+export function sleep(milliseconds: number): Promise<void> {
+    return new Promise((resolve)=>{setTimeout(resolve, milliseconds);});
 }
 
 export type JSONValue = undefined
