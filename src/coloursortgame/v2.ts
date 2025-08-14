@@ -513,7 +513,7 @@ class GameUI extends UIElement<null>{
     /** updates all the ui elements from changing the game state, most public methods call this */
     private setState(newState: Tube[]){
         assert(newState.length == this.tubes.length, "cannot change number of tubes with setState");
-	const details = this.stateManager?.visitState(this.state);
+	const details = this.stateManager?.visitState(newState);
 	
 	this.info("")
         for(const [idx, div] of this.tubes.entries()){
@@ -537,13 +537,14 @@ class GameUI extends UIElement<null>{
     }
     /** callback for clicking on a tube, checks result state, pushes current state to undo stack, and updates state. */
     private doAction(idx: number){
-        this.undoStack.push(this.state.slice());
-        const quality =  computeMove(this.state, idx);
+        this.undoStack.push(this.state);
+	const newState = this.state.slice()
+        const quality =  computeMove(newState, idx);
         if(quality === MoveQuality.UNMOVABLE){
             this.undoStack.pop(); // nothing changed so don't clutter the undo stack
             return;
         }
-        const details = this.setState(this.state);
+        const details = this.setState(newState);
         
         const isEnded = this.checkEnded(details);
         if(isEnded === StateUsefulness.DEAD){
@@ -691,6 +692,6 @@ export function serializeGameState(state: readonly Tube[]): SerializedState{
     return mutableStateCopy.map(x=>`${x.capacity}${x.content}`).join(",");
 }
 function isPromise(val:unknown): val is Promise<unknown>{
-    return "function" === typeof (val as Promise<unknown>).then
+    return "object" === typeof val && val !== null && "function" === typeof (val as Partial<Promise<unknown>>).then;
 }
 // @license-end
