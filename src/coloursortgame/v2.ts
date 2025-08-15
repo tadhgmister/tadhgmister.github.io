@@ -721,11 +721,20 @@ export function initGame(levelCodeOverride?: SerializedState){
 	}
     });
     game = new GameUI(gameDiv, document.getElementById("controls")!, initialState);
+
+    // set level code link
+    const lvlCodeParam = new URLSearchParams();
+    lvlCodeParam.set("levelCode", serializeGameState(initialState, false));
+    (document.getElementById("linkToThisExactLevelCode") as HTMLAnchorElement).href = "?" + lvlCodeParam.toString();
 }
-export function serializeGameState(state: readonly Tube[]): SerializedState{
-    const mutableStateCopy = state.slice();
-    Tube.normalize(mutableStateCopy);
-    return mutableStateCopy.map(x=>`${x.capacity}${x.content}`).join(",");
+export function serializeGameState(state: readonly Tube[], normalize=true): SerializedState{
+    if(normalize){
+	const mutableStateCopy = state.slice();
+	Tube.normalize(mutableStateCopy);
+	return mutableStateCopy.map(x=>`${x.capacity}${x.content}`).join(",");
+    } else{
+	return state.map(x=>`${x.capacity}${x.content}`).join(",");
+    }
 }
 function isPromise(val:unknown): val is Promise<unknown>{
     return "object" === typeof val && val !== null && "function" === typeof (val as Partial<Promise<unknown>>).then;
