@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Colour Sort Undo Explaination</title>
+    <meta name="author" value="Tadhg McDonald-Jensen">
+  <script type="module" src="../v2.js" onload="import(this.src).then(module=>module.initGame('5DBCCC,5DCBA,5AACBA,5DBADD,5'))"></script>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../coloursort-grid.css">
+  <link rel="prev" href="splitting.html">
+  <link rel="next" href="cheat.html">
+</head>
+<body>
+  <h1>Colour Sort Instructions Dead End Tracking and Undo</h1>
+  <a href="../">back to main game</a>
+  <p>
+    This level is only solvable if <span class="Ball C"><span>C</span></span> is the first colour to go to the empty tube, but in a real level you wouldn't know this ahead of time!
+    The game keeps track of dead ends you've found and if every move from a state leads to a dead end it is also marked as a dead end so you don't keep checking the same options again.
+  </p>
+  <p>
+    The <strong>undo to live</strong> button will enable when you are currently in a dead state and undoes moves until you get back into a state that has moves that aren't known to lead to dead ends. This doesn't mean it always takes you to a winnable state, just out of the deadends you've found.
+  </p>
+
+  <aside id="controls"></aside>
+  <main id="game"></main>
+  <form id="settingsForm" method="GET" action="./instructions4.html">
+    <p>
+      <input type="checkbox" id="disableFog" name="disableFog" value="yes" checked>
+      <label for="disableFog">disable fog</label>
+    </p>
+  </form>
+  <p><a href="cheat.html">forward to cheat button instructions</a></p>
+  <p><a href="./">back to instructions index</a></p>
+</body>
+</html>

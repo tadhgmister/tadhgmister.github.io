@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Colour Sort Cheat Explaination</title>
+    <meta name="author" value="Tadhg McDonald-Jensen">
+  <script type="module" src="../v2.js" onload="import(this.src).then(module=>module.initGame('6DBBCCC,5DCBA,5DCBA,6DAAADD,5'))"></script>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../coloursort-grid.css">
+  <link rel="prev" href="undo.html">
+  <link rel="next" href="conclusion.html">
+</head>
+<body>
+  <h1>Colour Sort Instructions Cheat Button</h1>
+  <p>
+    The <strong>cheat</strong> button can be used to check states for you. It's notion of <em class="airquote">depth</em> is a little different from <em class="airquote">moves</em>, if a state only has one possible move it will follow forced options until reaching a state with options, even if all but one of them is known to be dead. 
+  </p>
+  <p>
+    The first time you click the cheat button from a game state it
+    checks each <em class="airquote">child state</em> (the game
+    state you get to after performing a move) If a child state only
+    has one viable move it checks the state after that move and if
+    that also only has one move it checks that and so on. The result
+    is that on the first click of <strong>cheat</strong> button if a
+    move leads to a totally forced sequence of moves that leads to a
+    dead state it marks that move as dead, which you can see by
+    using <strong>cheat</strong> from the initial state in this
+    level, or after making one move of <span class="Ball A"><span>A</span></span>.
+  </p>
+  <p>
+    After the first use of <strong>cheat</strong> subsequent uses analyse new states, all states at the next <em class="airquote">depth</em> (corresponding to <em class="airquote">choices</em> which is every move from a state with more than one valid move). It informs you how many states it visited which can help identify dead ends, if the number keeps dropping to 0 then it is likely a complicated dead end, but if it grows rapidly then there is probably a state down the line that frees up an empty tube.
+  </p>
+
+  <aside id="controls"></aside>
+  <main id="game"></main>
+  <form id="settingsForm" method="GET" action="./instructions4.html">
+    <p>
+      <input type="checkbox" id="disableFog" name="disableFog" value="yes" checked>
+      <label for="disableFog">disable fog</label>
+    </p>
+  </form>
+  <!-- <p><a href="cheat.html">forward to fifth example</a></p> -->
+  <p><a href="conclusion.html">forward to extra notes</a></p>
+  <p><a href="./">back to instructions index</a></p>
+</body>
+</html>

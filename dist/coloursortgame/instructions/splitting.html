@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Colour Sort Move Clarification</title>
+    <meta name="author" value="Tadhg McDonald-Jensen">
+  <script type="module" src="../v2.js" onload="import(this.src).then(module=>module.initGame('4CCA,4CCA,4BBAA,3BB,1'))"></script>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../coloursort-grid.css">
+  <link rel="prev" href="moves.html">
+  <link rel="next" href="undo.html">
+</head>
+<body>
+    <h1>Colour Sort Game Splitting Logic</h1>
+    <a href="../">back to main game</a>
+    <p>
+        If there are 3 or more tubes with the same colour, blocks will automatically split when necessary to available space.
+    </p>
+    <p>
+      Depending on the level options you can have tubes of different sizes, when this is the case blocks can be moved between empty tubes of different capacities and split as needed.  If there are different sized tubes the level is only considered completed when all blocks are in the taller tubes.
+    </p>
+  <aside id="controls"></aside>
+  <main id="game"></main>
+
+  <form id="settingsForm" method="GET" action="./instructions4.html">
+    <p>
+      <input type="checkbox" id="disableFog" name="disableFog" value="yes" checked>
+      <label for="disableFog">disable fog</label>
+    </p>
+</form>
+<p><a href="undo.html">forward to undo instructions</a></p>
+  <p><a href="./">back to instructions index</a></p>
+
+</body>
+</html>

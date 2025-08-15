@@ -137,7 +137,7 @@ known to be unexplored be thicker seems like the best combo to me */
         transform: translateY(0);
     }
 }
-.Ball {
+.Tube > .Ball {
     display: flex;
     /* center span containing label as much as possible */
     justify-content: center; 

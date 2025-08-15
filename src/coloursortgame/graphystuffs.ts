@@ -549,6 +549,12 @@ export class StateManager{
 	/** a callback that is called whenever this.visitState is invoked to pass back the details of the state. */
 	private readonly visitCallback: (state: readonly Tube[], details: StateDetails)=>void = (_s)=>{}
     ){}
+    /** returns true if the given state is a dead state, intended for checking if entries in undoStack are dead */
+    public isStateDead(state: readonly Tube[]): boolean {
+	const id = serializeGameState(state);
+	const details = this.getOrCreateEntry(id,state);
+	return details.isDead();
+    }
     /**
      * calls visitCallback with the given state and a StateDetails
      * object that can lazy load details about viable children states.

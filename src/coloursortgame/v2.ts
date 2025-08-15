@@ -339,14 +339,20 @@ class ActionButton extends UIElement<"button"> {
 		this.disabled = false;
 	    }
 	};
-        this.element.innerText = label;
         this.element.type = "button";
+        this.label = label;
     }
     public get disabled(){
         return this.element.disabled;
     }
     public set disabled(val:boolean){
         this.element.disabled = val;
+    }
+    public get label(){
+	return this.element.innerText;
+    }
+    public set label(text:string){
+	this.element.innerText = text;
     }
 }
 class InfoBox extends UIElement<"p">{
@@ -449,6 +455,7 @@ class TubeDiv extends UIElement<"div">{
 }
 class AuxStuff extends UIElement<null>{
     public undoButton: ActionButton;
+    public undoTilLiveButton: ActionButton;
     public resetButton: ActionButton;
     public cheatButton: ActionButton;
     public serialBox: InfoBox;
@@ -457,11 +464,13 @@ class AuxStuff extends UIElement<null>{
 	// without css put the serial first so it shows above the buttons
 	// with styling we set it to use the same line as the buttons if there is room.
 	this.serialBox = new InfoBox(this, "");
-        this.undoButton = new ActionButton(this, "undo", ()=>game.undoUntilLive())
+        this.undoButton = new ActionButton(this, "undo", ()=>game.undo())
         this.undoButton.disabled = true;
         this.resetButton = new ActionButton(this, "reset", ()=>{game.reset()})
         this.resetButton.disabled = true;
 	this.cheatButton = new ActionButton(this, "cheat", ()=> game.checkPaths());
+	this.undoTilLiveButton = new ActionButton(this, "undo to live (0)", ()=>game.undoUntilLive());
+	this.undoTilLiveButton.disabled = true;
     }
 }
 class GameUI extends UIElement<null>{
@@ -528,8 +537,26 @@ class GameUI extends UIElement<null>{
             div.setState(newState[idx], this.shroudHeights[idx], details);
         }
         this.state = newState;
-	if(!this.isActivelyDoingLiveUndo){
-            this.aux.undoButton.disabled = this.undoStack.length === 0;
+	this.aux.undoButton.disabled = this.isActivelyDoingLiveUndo || this.undoStack.length === 0;
+	// update live undo label if we are in dead state.
+	if(details?.isDead()){
+	    if(!this.isActivelyDoingLiveUndo){
+		this.aux.undoTilLiveButton.disabled = false;
+	    }
+	    let countOfUndosToLiveState = 1; // start with current state
+	    for(let idx=this.undoStack.length-1;idx>=0;idx--){
+		// state manager must exist if details exists
+		if(this.stateManager!.isStateDead(this.undoStack[idx])){
+		    countOfUndosToLiveState += 1;
+		} else{
+		    break;
+		}
+	    }
+	    this.aux.undoTilLiveButton.label = `undo to live (${countOfUndosToLiveState})`;
+	} else{
+	    this.aux.undoTilLiveButton.label = `undo to live (0)`;
+	    this.aux.undoTilLiveButton.disabled = true;
+	    
 	}
         this.aux.resetButton.disabled = this.state.every((tube,idx)=>(this.initialState[idx].content === tube.content));
 	if(details !== undefined){
@@ -597,7 +624,7 @@ class GameUI extends UIElement<null>{
      * if the undoStack is empty gives an alert that it is not possible but in proper
      * operation the undo button should be disabled if this would fail.
      */
-    public undo(disableButtonAfter=true){
+    public undo(){
         const state = this.undoStack.pop();
 	// shouldn't happen as setState disables the undo button when undoStack is empty
         if(state === undefined){
@@ -624,7 +651,7 @@ class GameUI extends UIElement<null>{
 		}
 		this.undo();
 	    }
-	    return (this.undoStack.length === 0) ? "disabled" : undefined;
+	    return "disabled" //(this.undoStack.length === 0) ? "disabled" : undefined;
 	} finally {
 	    this.isActivelyDoingLiveUndo = false;
 	}
@@ -703,10 +730,10 @@ export function initGame(levelCodeOverride?: SerializedState){
         initialState = levelCode.split(",").map(Tube.loadFromSerial);
     } else{
 	let listOfEmpties: number[];
-	if(emptyList === null){
-	    listOfEmpties = Array(empties).fill(ballsPerColor-emptyPenalty);
-	} else{
+	if(typeof emptyList === "string"){
 	    listOfEmpties = emptyList.split(",").map(x=>parseInt(x));
+	} else{
+	    listOfEmpties = Array(empties).fill(ballsPerColor-emptyPenalty);
 	}
         initialState = newGameBoard(nColors, ballsPerColor, listOfEmpties, extraSlack);
     }
@@ -723,9 +750,12 @@ export function initGame(levelCodeOverride?: SerializedState){
     game = new GameUI(gameDiv, document.getElementById("controls")!, initialState);
 
     // set level code link
-    const lvlCodeParam = new URLSearchParams();
-    lvlCodeParam.set("levelCode", serializeGameState(initialState, false));
-    (document.getElementById("linkToThisExactLevelCode") as HTMLAnchorElement).href = "?" + lvlCodeParam.toString();
+    const link = document.getElementById("linkToThisExactLevelCode") as HTMLAnchorElement | null;
+    if(link !== null){
+	const lvlCodeParam = new URLSearchParams();
+	lvlCodeParam.set("levelCode", serializeGameState(initialState, false));
+	link.href = "?" + lvlCodeParam.toString();
+    }
 }
 export function serializeGameState(state: readonly Tube[], normalize=true): SerializedState{
     if(normalize){

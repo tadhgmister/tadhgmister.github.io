@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Colour Sort Rules</title>
+  <meta name="author" value="Tadhg McDonald-Jensen">
+  <script type="module" src="../v2.js" onload="import(this.src).then(module=>module.initGame('4CBA,4CBA,4CBA,4'))"></script>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../coloursort-grid.css">
+  <link rel="prev" href="intro.html">
+  <link rel="next" href="splitting.html">
+</head>
+<body>
+  <h1>Colour Sort Game Rules</h1>
+  <a href="../">back to main game</a>
+  <p>
+    When blocks can be moved to a partially filled tube, it is highlighted. When there is no partially filled tube to match, 
+    any colour can move to an empty tube, if you have one.
+  </p>
+  <p>
+    After you make the first move, try undoing to see the borders! A double line around a tube indicates that move goes to a state you have already visited. In this case since all the tubes are the same each initial move is equivelent, but in normal games the double border is a good way to identify what you have already tried.
+  </p>
+  <p>
+    If a move would lead to a dead end it is given a red border, try clicking on it to see what a deadend looks like! Undo or reset is always an option.
+  </p>
+  <aside id="controls"></aside>
+  <main id="game"></main>
+
+  <form id="settingsForm">
+    <p>
+      <input type="checkbox" id="disableFog" name="disableFog" value="yes">
+      <label for="disableFog">disable fog</label>
+    </p>
+  </form>
+  <p><a href="splitting.html">forward to splitting</a></p>
+  <p><a href="./">back to instructions index</a></p>
+
+</body>
+</html>

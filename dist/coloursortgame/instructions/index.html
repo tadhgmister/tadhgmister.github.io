@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Colour Sort First Example</title>
+    <meta name="author" value="Tadhg McDonald-Jensen">
+  <script type="module" src="../v2.js" onload="import(this.src).then(module=>module.initGame('3ABB,3BCC,3CAA,3'))"></script>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../coloursort-grid.css">
+  <link rel="next" href="moves.html">
+</head>
+<body>
+  <h1>Colour Sort Game Intro</h1>
+  <a href="../">back to main game</a>
+  <p>
+    Welcome to Colour Sort! In this game you will be given a set of tubes containing coloured blocks in a random order. 
+    The goal of the game is to sort them. 
+    You can move the top blocks of a tube by clicking anywhere on that tube. When all colours have been sorted you will get an alert that you have won.
+    Try it out!
+  </p>
+  <aside id="controls"></aside>
+  <main id="game"></main>
+
+  <form id="settingsForm">
+    <p>
+      <input type="checkbox" id="disableFog" name="disableFog" value="yes">
+      <label for="disableFog">disable fog</label>
+    </p>
+  </form>
+  <p>
+    The game is largely designed to be easy to play without reading instructions so feel free to just go try it. These pages provide explanation for specific behaviour of game mechanics.
+  </p>
+  <ul>
+    <li><a href="moves.html">Basic moves</a></li>
+    <li><a href="splitting.html">Splitting and priority</a></li>
+    <li><a href="undo.html">Undo buttons</a></li>
+    <li><a href="cheat.html">Cheat button</a></li>
+    <li><a href="conclusion.html">Extra notes</a></li>
+  </ul>
+  <a href="../">back to main game</a>
+
+</body>
+</html>
