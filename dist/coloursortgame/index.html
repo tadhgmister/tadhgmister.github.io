@@ -25,24 +25,38 @@
       <input type="submit" value="New game with the following settings">
     </p>
     <p>
-      <label for="colours">full tubes</label>
+      <label for="levelCode">level code, if not empty this overrides all other settings</label>
+      <input disabled type="hidden" id="levelCode" name="levelCode"
+	     placeholder="will use other settings"
+	     pattern="(\d{1,2}[A-Z!@#$%^&*=+\/]*)(,\d{1,2}[A-Z!@#$%^&*=+\/]*)+">
+
+    </p>
+    <p>
+      <!-- max of 37 is based on the length of viable colours in javscript code -->
       <input type="number" id="colours" name="nColors" min="2" max="37" step="1" value="8">
+      <label for="colours">full tubes</label> 
     </p>
     <p>
-      <label for="emptyTubes">empty tubes</label>
       <input type="number" id="emptyTubes" name="empties" min="0" step="1" value="2">
+      <label for="emptyTubes">empty tubes</label>
     </p>
     <p>
+      <input disabled type="hidden" id="emptyList" name="emptyList" size="10"
+	     pattern="\d+(,\d+)*"
+	     onchange="['emptyTubes','emptyTubeSize'].forEach(id=>{document.getElementById(id).disabled = this.value.length>0;})">
+      <label for="emptyList">list of empty tube capacities, overrides other settings about empties unless blank</label>
+    </p>
+    <p>
+      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" step="1" value="4" onchange="['fullTubeGapBonus','emptyTubeSize'].forEach(id=>{document.getElementById(id).setAttribute('max', (this.value)-1)})">
       <label for="ballsPerColour">blocks per tube</label>
-      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" step="1" value="4" onchange="for(let id of ['emptyTubeSize', 'fullTubeGapBonus'].values()){document.getElementById(id).setAttribute('max', (this.value)-1)}">
     </p>
     <p>
-      <label for="fullTubeGapBonus">more capacity in full tubes</label>
       <input type="number" id="fullTubeGapBonus" name="extraSlack" min="0" step="1" value="0">
+      <label for="fullTubeGapBonus">more capacity in full tubes</label>
     </p>
     <p>
-      <label for="emptyTubeSize">less capacity in empty tubes</label>
       <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" step="1" value="0">
+      <label for="emptyTubeSize">less capacity in empty tubes</label>
     </p>
     <input type="reset" value="reset to default settings">
 </form>
@@ -64,8 +78,8 @@
     <li><a href="?nColors=12&ballsPerColor=8">
       Marathon
     </a></li>
-    <li><a href="?nColors=13&ballsPerColor=6&empties=4&emptyPenalty=3">
-      Tadhg's favourite settings
+    <li><a href="?nColors=13&ballsPerColor=5&emptyList=3,4,2">
+      An interesting twist
     </a></li>
     <li><a href="?disableFog=yes&nColors=37&ballsPerColor=2&empties=3">
       <q>A word search counts as a puzzle right?</q>

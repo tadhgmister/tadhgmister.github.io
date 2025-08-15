@@ -26,16 +26,18 @@
    after the buttons */
     order: 1; 
 }
-/* all inputs in our game settings form, if other inputs are added later this should add #settingsForm as the parent */
-input[type=number] {
-    /* some platforms make number inputs super wide, we expect maybe 2 digits in ours */
-    max-width: 7ch;
-    /* I'd like to right align them so with the label it reads like a sentence but that means the cursor always ends up before the number which makes it annoying to delete and replace*/
-    text-align: center;
-    /* for accessibility reasons the label is always before the input in the html, but visually editing it is easier if they are all on the left*/
-    float: left;
-    /* margin to space it from the label when it gets floated to the left */
-    margin-right: 0.5ch;
+#settingsForm input[type="number" i] {
+    max-width: 4.5ch;
+    text-align: end;
+    padding-inline-end: 1ch;
+}
+/* disable labels for hidden inputs */
+input[type=hidden] + label, label:has(+input[type=hidden]) {
+    display: none;
+}
+#levelCode {
+    max-width: 100%;
+    width: 60ch;
 }
 /** TODO: probably do better labeling of solvable or impossible than just shoving some text in the grid */
 .GameBoard.solvable::after  { content: "solvable";}

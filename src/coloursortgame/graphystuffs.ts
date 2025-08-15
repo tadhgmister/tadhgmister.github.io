@@ -112,7 +112,20 @@ export function computeMove(tubes: Tube[], idxToDrain: number): MoveQuality {
             // there is insufficient room in empty or partial tubes to hold all the balls we are trying to move
             // most likely there are just no viable targets and no empty tubes
             return MoveQuality.UNMOVABLE;
-        }
+        } else if(isSourcePure && partialsSlack == 0){
+	    // if we are just moving from one pure tube to another try to move to the tube with a bit more capacity than we start with
+	    // so moving balls around tubes with different heights can actually be accomplished
+	    // if this succeeds we return right away, otherwise fallthrough to full algorithm
+	    // inevitably with a SHIFT move to split into shorter tubes
+	    for(const candidateIdx of empties.sort((a,b)=>(tubes[a].capacity-tubes[b].capacity))){
+		if(tubes[candidateIdx].capacity > toMoveCount){
+		    const [elemsMoved, tubesUsed] = moveHelper(tubes, [candidateIdx], col, toMoveCount, toMoveCount);
+		    assert(tubesUsed.length == 1 && elemsMoved == toMoveCount, "trying to move from one pure tube to the next higher capacity failed spectacularly");
+		    tubes[idxToDrain] = source.withTopRemoved(topCount);
+		    return MoveQuality.PURE;
+		}
+	    }
+	}
         result = MoveQuality.DRAIN;
         const [elemsMoved,tubesUsed] =  moveHelper(tubes, empties, col, minNeededToGoToEmpties, toMoveCount);
 	toMoveCount -= elemsMoved;
@@ -122,6 +135,7 @@ export function computeMove(tubes: Tube[], idxToDrain: number): MoveQuality {
 	    // if we moved to a single other tube with larger capacity call it a PURE move where as
 	    // to a shorter or splitting up as a SHIFT in order to identify the winning condition.
 	    if(tubesUsed.length === 1 && tubes[tubesUsed[0]].capacity > source.capacity){
+		// this can still happen when there is partial tubes to move to as well as empties
 		result = MoveQuality.PURE;
 	    } else {
 		// if we split to multiple shorter tubes or to a single shorter tube call this a SHIFT move,

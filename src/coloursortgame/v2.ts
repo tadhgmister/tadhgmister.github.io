@@ -227,7 +227,7 @@ export class Tube {
         }
     }
 }
-
+// note that the length of this string is needed in the html form for max size of tubes
 const COLORS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*=+/";
 function makeSolvedGameBoard(n_colours: number, balls_per_colour: number, empty_tubes: number, empty_tube_capacity: number = balls_per_colour, extraSlack=0){
     const board: Tube[] = []
@@ -239,7 +239,13 @@ function makeSolvedGameBoard(n_colours: number, balls_per_colour: number, empty_
     }
     return board
 }
-function newGameBoard(n_colours: number, balls_per_colour: number, empty_tubes: number, empty_tube_capacity: number = balls_per_colour, extraSlack = 0){
+/**
+ * makes a new gameboard / the initial state for a game
+ * n_colours, balls_per_colour, extraSlack directly correspond to their user options in the UI,
+ * empty_tubes is a list of capacities in the format of emptyList hidden option
+ * which is normally `balls_per_colour-emptyPenalty` repeated `empties` times.
+ */
+function newGameBoard(n_colours: number, balls_per_colour: number, empty_tubes: number[] = [balls_per_colour,balls_per_colour], extraSlack = 0){
     const flatboard: Color[] = [];
     for(let idx1=0;idx1<n_colours;idx1++){
         const color = COLORS[idx1];
@@ -253,10 +259,9 @@ function newGameBoard(n_colours: number, balls_per_colour: number, empty_tubes: 
 
     while(flatboard.length > 0){
         result.push(new Tube(flatboard.splice(0, balls_per_colour).join(""), balls_per_colour+extraSlack))
-    }    
-    const empty = new Tube("", empty_tube_capacity);
-    for(let idx=0;idx<empty_tubes;idx++){
-        result.push(empty)
+    }
+    for(const empCap of empty_tubes){
+	result.push(new Tube("", empCap));
     }
     return result
 }
@@ -686,7 +691,7 @@ export let game: GameUI;
 export let worker: WorkerWrapper<Handlers> | undefined;
 export function initGame(levelCodeOverride?: SerializedState){
     worker = new WorkerWrapper(new Worker("./worker.js", { type: "module"}));
-    let {nColors, ballsPerColor, empties, emptyPenalty, extraSlack, levelCode} = initSettings();
+    let {nColors, ballsPerColor, empties, emptyPenalty, extraSlack, levelCode, emptyList} = initSettings();
     if(nColors > COLORS.length){
         nColors = COLORS.length;
     }
@@ -697,7 +702,13 @@ export function initGame(levelCodeOverride?: SerializedState){
     if(levelCode){
         initialState = levelCode.split(",").map(Tube.loadFromSerial);
     } else{
-        initialState = newGameBoard(nColors, ballsPerColor, empties, ballsPerColor-emptyPenalty, extraSlack);
+	let listOfEmpties: number[];
+	if(emptyList === null){
+	    listOfEmpties = Array(empties).fill(ballsPerColor-emptyPenalty);
+	} else{
+	    listOfEmpties = emptyList.split(",").map(x=>parseInt(x));
+	}
+        initialState = newGameBoard(nColors, ballsPerColor, listOfEmpties, extraSlack);
     }
     const gameDiv = document.getElementById("game")!;
     worker.delegate("checkSolvability", initialState.map(x=>x.valueOf())).then((v)=>{
