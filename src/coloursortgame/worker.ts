@@ -1,11 +1,9 @@
 import {StateDetails, StateManager, StateUsefulness} from "./graphystuffs.js";
 import {workerSideRegisterHandlers} from "./commonHelpers.js";
 import { SerializedState, SerializedTube, serializeGameState, Tube } from "./v2.js";
-////// type stuff
-// these define the types of the handlers based on the handers variable below
-export type Handlers = typeof handlers;
+
 //////// handlers for messages
-const handlers = workerSideRegisterHandlers({
+export const handlers = workerSideRegisterHandlers({
     /**
      * checks whether the given initial state is solvable by walking over all states
      * returns true if solvable, false otherwise.

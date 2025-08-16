@@ -3,7 +3,6 @@
 import { MoveQuality, type StateDetails, TubeHighlight, StateManager, StateUsefulness, computeMove } from "./graphystuffs.js";
 import { initSettings } from "./settings.js";
 import { assert, sleep, WorkerWrapper } from "./commonHelpers.js";
-import type { Handlers } from "./worker.js";
 
 /**
  * alias to string, represents a serialized and normalized game state
@@ -715,9 +714,11 @@ class GameUI extends UIElement<null>{
     }
 }
 export let game: GameUI;
-export let worker: WorkerWrapper<Handlers> | undefined;
+function loadWorker(){
+    return new WorkerWrapper<typeof import("./worker.js")["handlers"]>(new URL("./worker.js", import.meta.url));
+}
 export function initGame(levelCodeOverride?: SerializedState){
-    worker = new WorkerWrapper(new Worker("./worker.js", { type: "module"}));
+    const worker = loadWorker();
     let {nColors, ballsPerColor, empties, emptyPenalty, extraSlack, levelCode, emptyList} = initSettings();
     if(nColors > COLORS.length){
         nColors = COLORS.length;
