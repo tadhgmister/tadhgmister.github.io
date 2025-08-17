@@ -27,7 +27,7 @@ export type JSONValue = undefined
     | JSONValue[]
     | {[k:string]: JSONValue}
 // TODO figure out how to get the input to conform to json
-export type HandlerConstraint = Record<string, (...args:unknown[])=>Promise<JSONValue>>;
+export type HandlerConstraint = Record<string, (...args:any[])=>Promise<JSONValue>>;
 type HandlerOutputs<H extends HandlerConstraint> = Awaited<ReturnType<H[keyof H]>>;
 type HandlerInputs<H extends HandlerConstraint> = Parameters<H[keyof H]>;
 export interface InMsg<H extends HandlerConstraint> {
