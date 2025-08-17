@@ -653,6 +653,8 @@ class GameUI extends UIElement<null>{
 	    return "disabled" //(this.undoStack.length === 0) ? "disabled" : undefined;
 	} finally {
 	    this.isActivelyDoingLiveUndo = false;
+	    // setSTate was set to not touch undo button while actively undoing, set it now
+	    this.aux.undoButton.disabled = this.undoStack.length === 0;
 	}
     }
     /**
