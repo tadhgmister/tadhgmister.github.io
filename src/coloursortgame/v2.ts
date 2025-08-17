@@ -643,7 +643,7 @@ class GameUI extends UIElement<null>{
 	    this.undo();
 	    while(this.usefulness === StateUsefulness.DEAD && this.undoStack.length > 0){
 		const currentState = this.state;
-		await sleep(400);
+		await sleep(300);
 		if(currentState !== this.state){
 		    return; // user changed state mid undo, just stop trying to undo
 		    // this also implies that the undo button will be clickable again, it is possible this is wrong but should be fine
