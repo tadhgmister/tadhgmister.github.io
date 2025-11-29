@@ -62,7 +62,7 @@ It is pronounced _Teague_ and means ["bard" or "poet" in gaelic][tadhgorigin]. (
 
 
 ## Education
-- <span class="date-range">2021 to Now</span> Masters of Applied Science at Carleton University
+- <span class="date-range">2022 to 2025</span> Masters of Computer Systems Engineering at Carleton University
 - <span class="date-range">2016 to 2021</span> Bachelors of Computer Systems Engineering at Carleton University. Graduated with 10.68/12 CGPA<!-- 219 total/(max 6 each) / 41 courses -->
 <!-- <li>2013 to 2016: Canterbury High school, grades 11 and 12-->
 <!-- <li>2011 to 2013: Lockerby High school, grades 9 and 10-->
