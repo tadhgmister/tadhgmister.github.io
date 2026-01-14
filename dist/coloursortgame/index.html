@@ -21,44 +21,62 @@
       <input type="checkbox" id="disableFog" name="disableFog" value="yes">
       <label for="disableFog">disable fog</label>
     </p>
-    <p>
-      <input type="submit" value="New game with the following settings">
-    </p>
-    <p>
-      <label for="levelCode">level code, if not empty this overrides all other settings</label>
-      <input disabled type="hidden" id="levelCode" name="levelCode"
-	     placeholder="will use other settings"
-	     pattern="(\d{1,2}[A-Z!@#$%^&*=+\/]*)(,\d{1,2}[A-Z!@#$%^&*=+\/]*)+">
+    <menu style="list-style:none; padding-inline-start:unset;">
 
-    </p>
-    <p>
-      <!-- max of 37 is based on the length of viable colours in javscript code -->
-      <input type="number" id="colours" name="nColors" min="2" max="37" step="1" value="8">
-      <label for="colours">full tubes</label> 
-    </p>
-    <p>
-      <input type="number" id="emptyTubes" name="empties" min="1" step="1" value="2">
-      <label for="emptyTubes">empty tubes</label>
-    </p>
-    <p>
-      <input disabled type="hidden" id="emptyList" name="emptyList" size="10"
-	     pattern="\d+(,\d+)*"
-	     onchange="['emptyTubes','emptyTubeSize'].forEach(id=>{document.getElementById(id).disabled = this.value.length>0;})">
-      <label for="emptyList">list of empty tube capacities, overrides other settings about empties unless blank</label>
-    </p>
-    <p>
-      <input type="number" id="ballsPerColour" name="ballsPerColor" min="2" step="1" value="4" onchange="['fullTubeGapBonus','emptyTubeSize'].forEach(id=>{document.getElementById(id).setAttribute('max', (this.value)-1)})">
-      <label for="ballsPerColour">blocks per tube</label>
-    </p>
-    <p>
-      <input type="number" id="fullTubeGapBonus" name="extraSlack" min="0" step="1" value="0">
-      <label for="fullTubeGapBonus">more capacity in full tubes</label>
-    </p>
-    <p>
-      <input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" step="1" value="0">
-      <label for="emptyTubeSize">less capacity in empty tubes</label>
-    </p>
-    <input type="reset" value="reset to default settings">
+      <li>
+	<input type="radio" id="FeedbackSimple" name="Feedback" value="simple">
+	<label for="FeedbackSimple">No highlighting</label>
+      </li>
+      <li>
+	<input type="radio" id="FeedbackDeadends" name="Feedback" value="deadends" checked>
+	<label for="FeedbackDeadends">Highlight visited dead ends and illegal moves</label>
+      </li>
+      <li>
+	<input type="radio" id="FeedbackVerbose" name="Feedback" value="verbose">
+	<label for="FeedbackVerbose">Verbose highlight mode</label>
+      </li>
+    </menu>
+    <menu class="newGameSettings">
+      <li>
+	<input type="submit" value="New game with the following settings">
+      </li>
+      <li>
+	<label for="levelCode">level code, if not empty this overrides all other settings</label>
+	<input disabled type="hidden" id="levelCode" name="levelCode"
+	       placeholder="will use other settings"
+	       pattern="(\d{1,2}[A-Z!@#$%^&*=+\/]*)(,\d{1,2}[A-Z!@#$%^&*=+\/]*)+">
+      </li>
+      <li>
+	<!-- max of 37 is based on the length of viable colours in javscript code -->
+	<input type="number" id="colours" name="nColors" min="2" max="37" step="1" value="8">
+	<label for="colours">full tubes</label> 
+      </li>
+      <li>
+	<input type="number" id="emptyTubes" name="empties" min="1" step="1" value="2">
+	<label for="emptyTubes">empty tubes</label>
+      </li>
+      <li>
+	<input disabled type="hidden" id="emptyList" name="emptyList" size="10"
+	       pattern="\d+(,\d+)*"
+	       onchange="['emptyTubes','emptyTubeSize'].forEach(id=>{document.getElementById(id).disabled = this.value.length>0;})">
+	<label for="emptyList">list of empty tube capacities, overrides other settings about empties unless blank</label>
+      </li>
+      <li>
+	<input type="number" id="ballsPerColour" name="ballsPerColor" min="2" step="1" value="4" onchange="['fullTubeGapBonus','emptyTubeSize'].forEach(id=>{document.getElementById(id).setAttribute('max', (this.value)-1)})">
+	<label for="ballsPerColour">blocks per tube</label>
+      </li>
+      <li>
+	<input type="number" id="fullTubeGapBonus" name="extraSlack" min="0" step="1" value="0">
+	<label for="fullTubeGapBonus">more capacity in full tubes</label>
+      </li>
+      <li>
+	<input type="number" id="emptyTubeSize" name="emptyPenalty" min="0" step="1" value="0">
+	<label for="emptyTubeSize">less capacity in empty tubes</label>
+      </li>
+      <li>
+	<input type="reset" value="reset to default settings">
+      </li>
+    </menu>
 </form>
 <section id="presets">
   <h2>Presets</h2>
@@ -78,8 +96,11 @@
     <li><a href="?nColors=12&ballsPerColor=8">
       Marathon
     </a></li>
-    <li><a href="?nColors=13&ballsPerColor=5&emptyList=3,4,2">
+    <li><a href="?nColors=13&ballsPerColor=6&emptyList=5,3,3">
       An interesting twist
+    </a></li>
+    <li><a href="?Feedback=verbose&nColors=18&ballsPerColor=5&emptyList=2,4,3">
+      Tadhg's favourite setting
     </a></li>
     <li><a href="?disableFog=yes&nColors=37&ballsPerColor=2&empties=3">
       <q>A word search counts as a puzzle right?</q>
@@ -87,6 +108,7 @@
     <li><a href="?disableFog=yes&nColors=16&levelCode=4DDFP,4FOIP,4IBDJ,4OMEB,4CLBB,4OOIA,4GFMK,4EEHP,4HGND,4GFGA,4AKJN,4CNPI,4KCLA,4NKJJ,4MMLL,4HCEH,4,4">
       The level that broke Tadhg and lead him to make this app
     </a></li>
+    
     <!-- <li><a href="?">
       TEMPLATE
     </a></li> -->
@@ -96,7 +118,11 @@
     <li><a href="?disableFog=yes&levelCode=4AEEB,4AFFB,4AGGB,4AHHB,4CEED,4CFFD,4CGGD,4CHHD,4,4">
         literally impossible
     </a></li>
-    <li><a rel="bookmark" href="#ThisValueShouldBeOverridenByJavascriptCode" id="linkToThisExactLevelCode">The exact level on this page</a></li> 
+    <li><a rel="bookmark" href="#ThisValueShouldBeOverridenByJavascriptCode" id="linkToThisExactLevelCode">The exact level on this page</a></li>
+
+    <!--<li><a href="?levelCode=5CKKKK,5CPHHH,5DED,5GGGG,5GHRRR,5HCCC,5JJJJ,5JRDDD,5KIOOO,5OIIII,5PPRPP,4EEEE,3,2O">
+      level containing losing loop of 2 states
+    </a></li> -->
   </ul>
 </section>
 

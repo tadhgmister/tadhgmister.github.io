@@ -101,58 +101,59 @@ export function computeMove(tubes: Tube[], idxToDrain: number): MoveQuality {
             }
         }
     }
-    let result = MoveQuality.NORMAL;
-    const topCount = source.topCount;
-    let toMoveCount = topCount;
-    if(toMoveCount > partialsSlack){
-	// we need to move more than there is space in partial tubes so some needs to go to empty tubes
-	// move as little as needed to empty tubes and the rest to partials
-        const minNeededToGoToEmpties = toMoveCount - partialsSlack;
-        if(minNeededToGoToEmpties > emptySlack){
-            // there is insufficient room in empty or partial tubes to hold all the balls we are trying to move
-            // most likely there are just no viable targets and no empty tubes
-            return MoveQuality.UNMOVABLE;
-        } else if(isSourcePure && partialsSlack == 0){
-	    // if we are just moving from one pure tube to another try to move to the tube with a bit more capacity than we start with
-	    // so moving balls around tubes with different heights can actually be accomplished
-	    // if this succeeds we return right away, otherwise fallthrough to full algorithm
-	    // inevitably with a SHIFT move to split into shorter tubes
-	    for(const candidateIdx of empties.sort((a,b)=>(tubes[a].capacity-tubes[b].capacity))){
-		if(tubes[candidateIdx].capacity > toMoveCount){
-		    const [elemsMoved, tubesUsed] = moveHelper(tubes, [candidateIdx], col, toMoveCount, toMoveCount);
-		    assert(tubesUsed.length == 1 && elemsMoved == toMoveCount, "trying to move from one pure tube to the next higher capacity failed spectacularly");
-		    tubes[idxToDrain] = source.withTopRemoved(topCount);
-		    return MoveQuality.PURE;
-		}
+    let toMoveCount = source.topCount;
+    // if the amount we need to move is more than total viable space then this is not a legal move
+    if(toMoveCount > partialsSlack + emptySlack){
+	return MoveQuality.UNMOVABLE;
+    }
+    // otherwise the move is legal, start by removing the source balls from the tube then use moveHelper to add them back to the rest.
+    // this allows us to return early as soon as we've done the right thing.
+    tubes[idxToDrain] = source.withTopRemoved(toMoveCount);
+    // move as much to partials first as possible
+    // this makes the pure tubes typically look emptier 
+    if(partialsSlack > 0){
+	const minMove = toMoveCount < partialsSlack ? toMoveCount : partialsSlack;
+	const [elemsMoved,tubesUsed] = moveHelper(tubes, partials, col, minMove, toMoveCount);
+	toMoveCount -= elemsMoved;
+	if(toMoveCount === 0){
+	    return MoveQuality.NORMAL;
+	}
+    }
+    else if(isSourcePure){
+	// if there weren't any partials to distribute to and our source is pure check for SHIFT case
+	// I.E. see if there is an empty tube bigger than our source tube and move to the next bigger one if possible.
+	// if there isn't any viable tubes then fall throguh to drain case (which also has a check for moving to a single smaller tube which is also considered shift)
+	for(const candidateIdx of empties.sort((a,b)=>(tubes[a].capacity-tubes[b].capacity))){
+	    if(tubes[candidateIdx].capacity > source.capacity){
+		const [elemsMoved, tubesUsed] = moveHelper(tubes, [candidateIdx], col, toMoveCount, toMoveCount);
+		assert(tubesUsed.length == 1 && elemsMoved == toMoveCount, "trying to move from one pure tube to the next higher capacity failed spectacularly");
+		return MoveQuality.SHIFT;
 	    }
 	}
-        result = MoveQuality.DRAIN;
-        const [elemsMoved,tubesUsed] =  moveHelper(tubes, empties, col, minNeededToGoToEmpties, toMoveCount);
-	toMoveCount -= elemsMoved;
-        if(isSourcePure && toMoveCount === 0){
-	    // we moved from a pure tube to just empties, this
-	    // necessarily implies we have tubes with different sizes.
-	    // if we moved to a single other tube with larger capacity call it a PURE move where as
-	    // to a shorter or splitting up as a SHIFT in order to identify the winning condition.
-	    if(tubesUsed.length === 1 && tubes[tubesUsed[0]].capacity > source.capacity){
-		// this can still happen when there is partial tubes to move to as well as empties
-		result = MoveQuality.PURE;
-	    } else {
-		// if we split to multiple shorter tubes or to a single shorter tube call this a SHIFT move,
-		// this is the only move type that is allowed from the win state.
-		result = MoveQuality.SHIFT;
-	    }
-        }
     }
-    // if there is still stuff to move after possibly consulting empty tubes (could be in addition or instead of)
-    // then move everything else to partials
-    // we should be certain there is enough room as if there wasn't the toMoveCount would be lowered by empties
-    // and if there wasn't enough space in the empties then UNMOVABLE should have already been returned.
-    if(toMoveCount > 0){
-        assert(toMoveCount === moveHelper(tubes, partials, col, toMoveCount, toMoveCount)[0], "move failed somehow");
+    // at this point all viable partials have been filled up and if the "move to the next bigger tube from a pure tube" special case was not applicable
+    // so move into empties
+    assert(toMoveCount > 0, "got to point in code to move to empties without anything to actually move");
+    const [elemsMoved, tubesUsed] = moveHelper(tubes, empties, col, toMoveCount, toMoveCount);
+    assert(elemsMoved == toMoveCount, "distributing to empties could not move enough balls");
+    if(tubesUsed.length > 1){
+	// needed multiple empties for one move, even if some went to partials this is a split
+	return MoveQuality.SPLIT;
     }
-    tubes[idxToDrain] = source.withTopRemoved(topCount);
-    return result;
+    // assert(tubesUsed.length === 1, "tubesUsed.length <= 0 ???")
+    // otherwise only one tube was used, if this tube wasn't pure then it is a drain
+    if(!isSourcePure){
+	// if this tube wasn't pure we ended up with one fewer empty tubes
+	// so it was a drain operation
+	return MoveQuality.DRAIN;
+    } else {
+	// technically in this case partialSlack could be positive
+	// but treating that as a different move quality would break normalization assumptions.
+	// if we moved a pure stack and only filled one empty tube as a result
+	// this is a shift move. Also if it could move to a 
+	//assert(partialsSlack > 0 || tubes[tubesUsed[0]].capacity < source.capacity, "got to last case of computeMove expecting it to represent PURE move to smaller tube")
+	return MoveQuality.SHIFT;
+    }
 }
 /*
 Notes:
@@ -213,10 +214,10 @@ export const enum MoveQuality {
     DRAIN="drain",
     /** there is no viable move */
     UNMOVABLE="unmovable",
-    /** moves balls from a pure tube to an empty with higher capacity, only used when there are tubes of different sizes */
-    PURE="pure",
-    /** move from pure tube to smaller tubes, this is only relevant if there are different sized tubes and the only move possible from the win state. */
+    /** moves balls from a pure tube to another single empty tube of different capacity */
     SHIFT="shift",
+    /** move from pure tube to smaller tubes, this is only relevant if there are different sized tubes and the only move possible from the win state. */
+    SPLIT="split",
 }
 /**
  * the "state" of a game state in terms of its viable moves.
@@ -351,7 +352,8 @@ export class StateDetails {
         }
 	// overriden to false if there is at least one move that is not a shift
 	// used to detect winning state
-	let onlyShiftMoves = true;
+	let onlySplitMoves = true;
+	let mightBeInLoop = true;
 	this.isEnd = true; // overriden in loop unless every option is UNMOVABLE
 	let viableLiveMoves = 0;
         this.moveMap = new Map();
@@ -370,25 +372,34 @@ export class StateDetails {
 	    // there is at least one viable move regardless of what kind it is.
 	    // this may be set back to true if we detect the won state below.
 	    this.isEnd = false; 
-	    if(quality !== MoveQuality.SHIFT){
-		onlyShiftMoves = false;
-		// if we have at least one move that is not a shift then we can't be in won state.
+	    if(quality !== MoveQuality.SPLIT){
+		onlySplitMoves = false;
+		// if we have at least one move that is not a split then we cannot be in winning state
+		if(quality !== MoveQuality.SHIFT){
+		    // loops can have SPLIT or SHIFT moves but any other then we aren't in a loop
+		    mightBeInLoop = false;
+		}
 	    }
             const result = serializeGameState(refState);
             const childState = this.callWhenComputingChildren(this, result, refState);
             this.moveMap.set(normed_content, new MoveDetails(this.id, childState, quality));
 	    if(childState.usefulness !== StateUsefulness.DEAD){
 		viableLiveMoves += 1;
+		if (childState.usefulness !== StateUsefulness.UNKNOWN){
+		    // if there is a child state that is already computed (not unknown) and not dead then we
+		    // could still potentially be in a loop, but those other states should be explored before we check for a loop
+		    mightBeInLoop = false;
+		}
 	    }
         }
 	// in the case of a game like 6CAAAA,6CBBBB,6CCC,3 the only
 	// viable move is to shift the pure tube of Cs to the shorter
 	// empty tube and then the others can make use of the taller
 	// tube to continue the game. So only having shift moves doesn't imply an end state.
-	if(onlyShiftMoves && this.lastSeen.every((t)=>t.isPure)){
+	if(onlySplitMoves && this.lastSeen.every((t)=>t.isPure)){
 	    // we are in the end state and every tube is pure, therefore this is the won state.
 	    this.usefulness = StateUsefulness.WINNING;
-	    // set isEnd back to true, as even though there may be shift moves they will just lead back to the won state.
+	    // set isEnd back to true, as even though there may be split moves they will just lead back to the won state.
 	    // this is also important for the isWon getter.
 	    this.isEnd = true;
 	} else if (viableLiveMoves === 0){
@@ -398,14 +409,62 @@ export class StateDetails {
 	    this.usefulness = StateUsefulness.DEAD;
 		
 	} else if( this.usefulness !== StateUsefulness.WINNING ){
-	    // we have a move and aren't the won state, so unless we have already been marked as winning we should be identified as alive
-	    this.usefulness = StateUsefulness.ALIVE;
+	    if(mightBeInLoop && this.checkForDeadLoop()){
+		this.usefulness = StateUsefulness.DEAD;
+	    } else {
+		// we have a move and aren't the won state or dead loop so unless we have already been marked as winning we should be identified as alive
+		this.usefulness = StateUsefulness.ALIVE;
+	    }
 	} 
 	// inform parents we are either a win final state or in a dead state if applicable.
 	if(this.isDead() || this.isWon()){
 	    this.callWhenStateHasNoLiveChildren(this.parentStates, this.usefulness);
 	}
         return this.moveMap;
+    }
+    /** checks if this state is part of a loop of otherwise dead states
+	specifically, this recursively walks its children states reachable through only SHIFT and SPLIT moves
+        if any other move types are seen or there are children states that are not fully explored then this returns false
+       but if every reachable state only has those move types or can reach dead states then it indicates a cycle that is collectively dead.*/
+    public checkForDeadLoop(seen = new Set<StateDetails>([this])): boolean{
+	let to_check_prev = new Set<StateDetails>();
+	let to_check_next = new Set<StateDetails>([this]);
+	while(to_check_next.size > 0){
+	    to_check_prev.clear(); // ones we iterated over last loop, clear them
+	    // now swap sets so we will iterate over the ones that were set as 'next' last loop is now 'prev'
+	    // and the set that was prev and just cleared is now next.
+	    [to_check_prev, to_check_next] = [to_check_next, to_check_prev];
+	    for (const state of to_check_prev.values()){
+		assert(state.usefulness !== StateUsefulness.DEAD, "hit dead state early in check for dead loop")
+		if(state.usefulness === StateUsefulness.WINNING){return false;}
+		if(state.moveMap === undefined){
+		    // there is a state that hasn't been properly computed, we are not in a verifyable loop
+		    // same as checking it has usefulness of UNKNOWN but typesafety needs to confirm that moveMap exists to loop over it
+		    assert(state.usefulness === StateUsefulness.UNKNOWN, "state had undefined moveMap but not UNKNOWN usefulness")
+		    return false; 
+		}
+		for(const [_tube,move] of state.moveMap.entries()){
+		    const [quality, resultUsefulness] = move.highlight;
+		    if(resultUsefulness === StateUsefulness.DEAD || move.resultState === undefined || seen.has(move.resultState)){
+			// skip invalid moves,  known dead states, and already checked states
+			continue;
+		    }
+		    assert(quality !== MoveQuality.UNMOVABLE, "move has defined resultState but move quality is UNMOVABLE");
+		    switch(quality){
+			default:
+			    assert_never(quality, "did not account for all possible move qualities");
+			case MoveQuality.NORMAL:
+			case MoveQuality.DRAIN:
+			    return false; // not a loop
+			case MoveQuality.SHIFT:
+			case MoveQuality.SPLIT:
+			    to_check_next.add(move.resultState);
+			    seen.add(move.resultState);
+		    }
+		}
+	    }
+	}
+	return true; // we visited all unique reachable states through shift or split moves and only saw dead moves
     }
     /**
      * gets the quality of the move resulting from the given tube
@@ -661,19 +720,26 @@ export class StateManager{
 	}
     }
     /** callback when a state is marked as dead or winning to inform all parents, may be called recursively as a result of updating more states */
-    private labeledAsDeadCallback(parents: StateDetails["parentStates"]){
+    private labeledAsDeadCallback(parents: StateDetails["parentStates"], alreadyCheckedForLoop = new Set<StateDetails>()){
+	const statesThatCouldBePartOfLoop = new Set<StateDetails>();
+	    
 	// will recursively go up grandparent states until no more are being labeled as dead
 	while(parents.size > 0){
 	    // keep track of parents to these parents to visit 
 	    let grandparents = new Set<SerializedState>();
-	    parentsloop: for(const parentId of parents){
+	    for(const parentId of parents){
 		const parent = this.states.get(parentId);
 		if(parent === undefined || parent.usefulness == StateUsefulness.UNKNOWN){
-		    throw new Error("parent state not initialized???");}
+		    throw new Error("parent state not initialized???");
+		}
 		if(parent.usefulness == StateUsefulness.DEAD){continue;} // don't recheck already marked states
 		// check if all child states are dead, if so continue outer loop (skip this one)
 		const {done, value} =  parent.getChildren(true).next();
 		if(!done){
+		    // value and parent should be part of the same loop
+		    // my intuition says that checking 'value' instead should be faster in general
+		    // but I can't convince myself that hits every possible case but checking every state hit by this loop should.
+		    statesThatCouldBePartOfLoop.add(parent);
 		    continue; // there was a live child
 		}
 		assert(value === StateUsefulness.DEAD, "getChildren(true) did not yield any live children but did not return DEAD");
@@ -684,6 +750,18 @@ export class StateManager{
 		}
 	    }
 	    parents = grandparents;
+	    continue;
+	}
+	const toCheckThisLayer = statesThatCouldBePartOfLoop.difference(alreadyCheckedForLoop);
+	for(const s of toCheckThisLayer){alreadyCheckedForLoop.add(s);}
+	// at this point all the definite parent/grandparent marking chain has been done. check the cycle candidates
+	for(const state of toCheckThisLayer){
+	    if(state.usefulness == StateUsefulness.DEAD || state.usefulness === StateUsefulness.WINNING){continue;}
+	    if(state.checkForDeadLoop(alreadyCheckedForLoop)){
+		// if it is a dead loop then mark it as dead and redo this function for its parents.
+		state.usefulness = StateUsefulness.DEAD;
+		this.labeledAsDeadCallback(state.parentStates, alreadyCheckedForLoop);
+	    }
 	}
     }
     protected labeledAsWonCallback(parents: StateDetails["parentStates"]){

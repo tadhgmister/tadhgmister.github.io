@@ -128,58 +128,58 @@ export class Tube {
         const thingy = new Tube(topColor.repeat(topCount), capacityOfDest);
         return [this.withTopRemoved(topCount), thingy];
     }
-    /**
-     * returns a modified version of this tube and modifies the list of tubes passed in place
-     *  corresponds to moving balls from this tube into others until it is cleared of the top colour
-     * or we run out of destination tubes
-     * 
-     * note that if this tube is present in the list of other tubes it is skipped, 
-     * you must set that element to the return value of this function to maintain a valid state.
-     * 
-     * returns `this` by reference if nothing is done, either there are no viable destinations with slack or this is empty.
-     * @param others list of tubes to move colours into, is modified in place
-     * @returns the new contents of this tube after moving the top colour into the other tubes
-     */
-    private moveToOthers(others: Tube[], ignoreEmpty = true){
-        const color = this.topColor;
-        if(color === undefined){return this;} // this tube is empty, nothing to do
-        const topCount = this.topCount;
-        let ballsLeftToMove = topCount;
-        for(let idx=0; idx<others.length && ballsLeftToMove>0; idx++){
-            const dest = others[idx];
-            // skip if destination is this tube or if it contains another colour
-            // note that dest.topColor would be undefined if it is empty so we only skip
-            // if it isn't empty (has another colour) or we are ignoring empty, otherwise this is a totally valid target.
-            if(dest === this || (dest.topColor!==color && (ignoreEmpty || !dest.isEmpty))){continue;} // the tube is another colour
-            const slack = dest.slack;
-            if(slack === 0){continue;} // tube has no space
-            const movedToThisDest = slack < ballsLeftToMove ? slack : ballsLeftToMove;
-            others[idx] = dest.withAdded(color, movedToThisDest);
-            ballsLeftToMove -= movedToThisDest;
-        }
-        if(ballsLeftToMove === topCount){return this;}//nothing happened
-        return this.withTopRemoved(topCount - ballsLeftToMove);
-    }
-    /**
-     * collects a colour from the tops of all tubes into an empty tube
-     * modifies the list of tubes passed as argument and returns a new tube with the balls that were removed from there
-     * @param tubes game state to take balls from
-     * @param color the color to take
-     * @returns a pure tube with all the balls taken from the rest of the tubes
-     */
-    private static collect(tubes: Tube[], color: Color, capacity: number){
-        let nCollected = 0;
-        for(const [idx,tube] of tubes.entries()){
-            if(tube.topColor !== color){continue;}
-            let count = tube.topCount;
-            if(nCollected + count > capacity){
-                count = capacity - nCollected;
-            }
-            tubes[idx] = tube.withTopRemoved(count);
-            nCollected += count;
-        }
-        return new Tube(color.repeat(nCollected), capacity);
-    }
+    // /**
+    //  * returns a modified version of this tube and modifies the list of tubes passed in place
+    //  *  corresponds to moving balls from this tube into others until it is cleared of the top colour
+    //  * or we run out of destination tubes
+    //  * 
+    //  * note that if this tube is present in the list of other tubes it is skipped, 
+    //  * you must set that element to the return value of this function to maintain a valid state.
+    //  * 
+    //  * returns `this` by reference if nothing is done, either there are no viable destinations with slack or this is empty.
+    //  * @param others list of tubes to move colours into, is modified in place
+    //  * @returns the new contents of this tube after moving the top colour into the other tubes
+    //  */
+    // private moveToOthers(others: Tube[], ignoreEmpty = true){
+    //     const color = this.topColor;
+    //     if(color === undefined){return this;} // this tube is empty, nothing to do
+    //     const topCount = this.topCount;
+    //     let ballsLeftToMove = topCount;
+    //     for(let idx=0; idx<others.length && ballsLeftToMove>0; idx++){
+    //         const dest = others[idx];
+    //         // skip if destination is this tube or if it contains another colour
+    //         // note that dest.topColor would be undefined if it is empty so we only skip
+    //         // if it isn't empty (has another colour) or we are ignoring empty, otherwise this is a totally valid target.
+    //         if(dest === this || (dest.topColor!==color && (ignoreEmpty || !dest.isEmpty))){continue;} // the tube is another colour
+    //         const slack = dest.slack;
+    //         if(slack === 0){continue;} // tube has no space
+    //         const movedToThisDest = slack < ballsLeftToMove ? slack : ballsLeftToMove;
+    //         others[idx] = dest.withAdded(color, movedToThisDest);
+    //         ballsLeftToMove -= movedToThisDest;
+    //     }
+    //     if(ballsLeftToMove === topCount){return this;}//nothing happened
+    //     return this.withTopRemoved(topCount - ballsLeftToMove);
+    // }
+    // /**
+    //  * collects a colour from the tops of all tubes into an empty tube
+    //  * modifies the list of tubes passed as argument and returns a new tube with the balls that were removed from there
+    //  * @param tubes game state to take balls from
+    //  * @param color the color to take
+    //  * @returns a pure tube with all the balls taken from the rest of the tubes
+    //  */
+    // private static collect(tubes: Tube[], color: Color, capacity: number){
+    //     let nCollected = 0;
+    //     for(const [idx,tube] of tubes.entries()){
+    //         if(tube.topColor !== color){continue;}
+    //         let count = tube.topCount;
+    //         if(nCollected + count > capacity){
+    //             count = capacity - nCollected;
+    //         }
+    //         tubes[idx] = tube.withTopRemoved(count);
+    //         nCollected += count;
+    //     }
+    //     return new Tube(color.repeat(nCollected), capacity);
+    // }
     /** 
      * modifies the list of tubes in place to normalize it.
      * this reorders the tubes and redistributes some of the amounts at the tops of tubes
@@ -228,16 +228,16 @@ export class Tube {
 }
 // note that the length of this string is needed in the html form for max size of tubes
 const COLORS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*=+/";
-function makeSolvedGameBoard(n_colours: number, balls_per_colour: number, empty_tubes: number, empty_tube_capacity: number = balls_per_colour, extraSlack=0){
-    const board: Tube[] = []
-    for(let idx=0;idx<n_colours;idx++){
-        board.push(new Tube(COLORS[idx].repeat(balls_per_colour), balls_per_colour+extraSlack));
-    }
-    for(let idx=0;idx<empty_tubes;idx++){
-        board.push(new Tube("", empty_tube_capacity))
-    }
-    return board
-}
+// function makeSolvedGameBoard(n_colours: number, balls_per_colour: number, empty_tubes: number, empty_tube_capacity: number = balls_per_colour, extraSlack=0){
+//     const board: Tube[] = []
+//     for(let idx=0;idx<n_colours;idx++){
+//         board.push(new Tube(COLORS[idx].repeat(balls_per_colour), balls_per_colour+extraSlack));
+//     }
+//     for(let idx=0;idx<empty_tubes;idx++){
+//         board.push(new Tube("", empty_tube_capacity))
+//     }
+//     return board
+// }
 /**
  * makes a new gameboard / the initial state for a game
  * n_colours, balls_per_colour, extraSlack directly correspond to their user options in the UI,
@@ -303,7 +303,11 @@ class UIElement<tag extends null | keyof HTMLElementTagNameMap> {
             // Append the new element to the parent element
             parentElement.appendChild(this.element);
 	}
-	this.element.classList.add((this.constructor as {className?:string}).className ?? this.constructor.name);
+	const className = (this.constructor as {className?:string}).className;
+	if(className !== undefined){
+	    this.element.classList.add(className);
+	}
+	this.element.classList.add(this.constructor.name);
     }
 
     // Method to delete the created DOM element
@@ -354,9 +358,9 @@ class ActionButton extends UIElement<"button"> {
 	this.element.innerText = text;
     }
 }
-class InfoBox extends UIElement<"p">{
+class InfoBox extends UIElement<"span">{
     constructor(parent: UIParent, initialContent: string){
-        super("p", parent);
+        super("span", parent);
         this.content = initialContent
     }
     public get content(){
@@ -395,13 +399,18 @@ class TubeDiv extends UIElement<"div">{
     private balls: BallDiv[] = []
     private readonly capacity: number
     private highlight: TubeHighlight = [MoveQuality.DRAIN, StateUsefulness.UNKNOWN];
-    constructor(parent: UIParent, tube: Tube, clickCallback: (this: HTMLDivElement, ev: MouseEvent) => void){
+    constructor(parent: UIParent, tube: Tube, clickCallback: (this: HTMLDivElement, ev:MouseEvent|KeyboardEvent) => void){
         super("div", parent);
         this.capacity = tube.capacity;
         this.element.style.setProperty("--capacity", tube.capacity.toString());
         this.element.classList.add(...this.highlight);
         if(tube.isEmpty){this.element.classList.add("empty")}
+	
         this.element.addEventListener("click", clickCallback)
+	this.element.addEventListener("keydown", (ev)=>{
+	    if(ev.code == "Enter"){clickCallback.call(this.element, ev)}});
+	this.element.tabIndex = 0; // make this keyboard selectable to go with the keydown listener
+	
         for(let idx=0; idx<tube.content.length; idx++){
             this.balls.push(new BallDiv(this, tube.content[idx], idx<tube.shroud))
         }
@@ -443,14 +452,18 @@ class TubeDiv extends UIElement<"div">{
         if(details){
             this.highlight = details.getMoveStat(tube);
             this.element.classList.add(...this.highlight);
-            // if(!worked){
-            //     console.error("tube highlight failed to be replaced", this)
-            // }
+	    
+	    this.element.tabIndex = (this.highlight[0] == MoveQuality.UNMOVABLE)
+		                     ? -1 : 0; 
         } 
     }
     private getContent(){
         return this.balls.map(div=>div.color).join("")
     }
+}
+/** totally empty subclass of ActionButton to change the name of the css class. */
+class UndoUntilLiveButton extends ActionButton{
+    public static className = "ActionButton"
 }
 class AuxStuff extends UIElement<null>{
     public undoButton: ActionButton;
@@ -458,18 +471,17 @@ class AuxStuff extends UIElement<null>{
     public resetButton: ActionButton;
     public cheatButton: ActionButton;
     public serialBox: InfoBox;
-    constructor(parent: UIParent, game: GameUI, initialSerializedState:SerializedState){
+    constructor(parent: UIParent, game: GameUI){
         super(null, parent);
-	// without css put the serial first so it shows above the buttons
-	// with styling we set it to use the same line as the buttons if there is room.
-	this.serialBox = new InfoBox(this, "");
         this.undoButton = new ActionButton(this, "undo", ()=>game.undo())
         this.undoButton.disabled = true;
         this.resetButton = new ActionButton(this, "reset", ()=>{game.reset()})
         this.resetButton.disabled = true;
 	this.cheatButton = new ActionButton(this, "cheat", ()=> game.checkPaths());
-	this.undoTilLiveButton = new ActionButton(this, "undo to live (0)", ()=>game.undoUntilLive());
+	this.undoTilLiveButton = new UndoUntilLiveButton(this, "undo to live (0)", ()=>game.undoUntilLive());
 	this.undoTilLiveButton.disabled = true;
+	// put serialBox last so it can wrap onto next line if needed
+	this.serialBox = new InfoBox(this, "");
     }
 }
 class GameUI extends UIElement<null>{
@@ -486,7 +498,7 @@ class GameUI extends UIElement<null>{
     private stateManager?: StateManager;
     private shroudHeights: number[] = [];
     /** the 'usefulness' of the current state, used to mark when you have won or lost
-      note that the initial value is */
+      note that the initial value is overriden once the state manager is loaded */
     private _usefulness = StateUsefulness.UNKNOWN;
     private get usefulness(){return this._usefulness;}
     private set usefulness(val: StateUsefulness){
@@ -499,7 +511,7 @@ class GameUI extends UIElement<null>{
 	this.element.classList.add(this._usefulness);
         this.state = initialState.slice();
         for(const [idx,tube] of initialState.entries()){
-            this.tubes.push(new TubeDiv(mainElem, tube, ev=>{
+            this.tubes.push(new TubeDiv(mainElem, tube, (_ev)=>{
                 this.doAction(idx);
             }))
             this.shroudHeights.push(tube.shroud)
@@ -510,7 +522,7 @@ class GameUI extends UIElement<null>{
             this.updateNRowsCSSVariableBasedOnMeasuredRows();
         });
         resizeObserver.observe(this.element);
-        this.aux = new AuxStuff(controlsElem, this, serializeGameState(initialState))
+        this.aux = new AuxStuff(controlsElem, this)
 
         import("./graphystuffs.js").then(module=>{
             this.stateManager = new module.StateManager();
@@ -609,8 +621,8 @@ class GameUI extends UIElement<null>{
         for(const q of this.generateMoveQualities()){
             if(q === MoveQuality.UNMOVABLE){
 		continue; // unmovable so not an indicator of alive
-	    }else if(winning && q === MoveQuality.SHIFT){
-		continue; // if all tubes are pure shift moves are ignored for win check
+	    }else if(winning && q === MoveQuality.SPLIT){
+		continue; // if all tubes are pure split moves are ignored for win check
             }
 	    // otherwise we have a viable move so we are in alive state.
 	    return StateUsefulness.ALIVE;
@@ -687,7 +699,7 @@ class GameUI extends UIElement<null>{
 	    return;
 	}
 	let stateToAnalyse = this.state;
-	const {details, msg} = await this.stateManager.analyseState(stateToAnalyse);
+	const {msg} = await this.stateManager.analyseState(stateToAnalyse);
 	// call setState to potentially update classes based on new info if details changes
 	// but only if the state didn't change
 	if(this.state === stateToAnalyse){

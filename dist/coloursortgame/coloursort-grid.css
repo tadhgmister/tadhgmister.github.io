@@ -2,7 +2,7 @@
     --ball-size: 50px;
     --tube-border-size: 3px;
     --tube-padding-size: 3px;
-    --gap-size: 5px;
+    --gap-size: 6px;
 }
 /** ensure buttons have a reasonable minimum size so they are easy to click on */
 .ActionButton {
@@ -15,24 +15,40 @@
     /* leave a gap between buttons and link to instructions */
     margin-top: 1em;
     display: flex;
-    /* get the info box to wrap upwards, assuming it is set to the end*/
-    flex-flow: row wrap-reverse;
+    /* get the info box to wrap, mainly so long messages go on next line if they can't fit on same line as buttons. */
+    flex-flow: row wrap;
 }
-.AuxStuff .InfoBox {
-    flex-grow: 1;
-    /* if styling is disabled the info box is set first in the html, with
-   styling we want to display it after the buttons if there is room on
-   the same line or on the line above if not, so set order to move it
-   after the buttons */
-    order: 1; 
+body:has(#FeedbackSimple:checked) .UndoUntilLiveButton {
+    display: none;
+}
+/* info box for non blocking alerts will be absolute screen positioned */
+.InfoBox {
+    position: fixed;
+    z-index: 10;
+    bottom: 2em;/* just in case there is a phone UI blocking the message */
+    left: 0px;
+    max-width: 100vw;
+    padding: 0.5em;
+    background: light-dark(burlywood, darkblue);
+}
+.InfoBox:empty {
+    display: none;
 }
 #settingsForm input[type="number" i] {
     max-width: 4.5ch;
     text-align: end;
     padding-inline-end: 1ch;
 }
+/* menu used for settings newlines should not display like a ul */
+menu {
+    list-style: none;
+    padding-inline-start:unset;
+}
+menu.newGameSettings > li {
+    margin-bottom: 0.5em;
+}
 /* disable labels for hidden inputs */
-input[type=hidden] + label, label:has(+input[type=hidden]) {
+li:has(input[type=hidden]) {
     display: none;
 }
 #levelCode {
@@ -41,6 +57,7 @@ input[type=hidden] + label, label:has(+input[type=hidden]) {
 }
 /** TODO: probably do better labeling of solvable or impossible than just shoving some text in the grid */
 .GameBoard.solvable::after  { content: "solvable";}
+.GameBoard.solvable.ended.dead::after  { content: "solvable (from start)";}
 .GameBoard.impossible::after {content: "impossible";}
 
 .GameBoard {
@@ -65,7 +82,8 @@ input[type=hidden] + label, label:has(+input[type=hidden]) {
 }
 
 .Tube {
-    --border-transp: 1;
+    /* transparency of border, set to 1 for focussed tube */
+    --border-transp: 0.7;
     /* tube spans over rows based on capacity */
     grid-row-end: span var(--capacity);
     /* display balls from bottom to top */
@@ -75,56 +93,77 @@ input[type=hidden] + label, label:has(+input[type=hidden]) {
     padding: var(--tube-padding-size);
     border-width: var(--tube-border-size);
     border-style: solid;
-    border-color: light-dark(rgba(0,0,0, var(--border-transp)), rgba(255,255,255, var(--border-transp)));
+    --border: light-dark(rgba(0,0,0, var(--border-transp)), rgba(255,255,255, var(--border-transp)));
+    border-color: var(--border);
+    outline-color: var(--border);
+    outline-style: solid;
+    outline-width: 0px;
     /* will take up available space in width and height */
     width: auto;
     height: auto;
     /* since tubes are all different heights we use margin-top for the vertical gaps instead of within grid, applying grid gaps would effectively put gaps between balls although because the balls are within tubes it just messes up spacing */
     margin-top: var(--gap-size);
-
 }
-/* regarding alive and visited, mostly they come together so making it
-  double border and thicker is fairly subtle but if the user cheats
-  states will have alive but not visited and if they traverse dead
-  paths or find the winning path they will not be considered alive but will be visited.
 
-Having visited dead paths be doubled vs thicker and unexplored but
-known to be unexplored be thicker seems like the best combo to me */
-/* show thicker border around states that have been explicitly visited,. */
-.Tube.alive {
+/* the following is logic for tube border highlighting */
+
+
+/* hover makes border extend inward */
+.Tube:hover {
+    padding: 0px;
     border-width: calc(var(--tube-border-size) + var(--tube-padding-size));
-    padding: 0;
 }
-/** if a state has been checked and not found to be dead but also hasn't been explicitly visited give a hue to the border */
-.Tube.visited {
-    border-style: double;
-    /* border-color: rgba(0,0,150, var(--border-transp)); */
+/* keyboard focus applies outline to match border, effectively extending border outward */
+.Tube:focus-visible {
+    outline-width: var(--tube-padding-size);
 }
-/* unmovable tubes show as faded compared to normal */
-.Tube.unmovable {
-    --border-transp: 0.1;
+/* make the border more vibrant when selected a legal move with either method */
+.Tube:not(.unmovable):hover, .Tube:not(.unmovable):focus-visible {
+    --border-transp: 1;
 }
-/* drain moves that would take up an empty tube will be dashed */
-.Tube.drain, .Tube.shift {
-    --border-transp: 0.7;
+/* if selected with either method on an unmovable tube make the border dashed */
+.Tube.unmovable:hover, .Tube.unmovable:focus-visible {
+    border-style: dashed;
 }
-/* empty tubes will have a faint background to let them stand out a bit more */
+/* empty tubes should be "greyed out" to make them easier to differentiate */
 .Tube.empty {
     background-color: rgba(128,128,128, 0.2);
+    --border: rgba(128,128,128, var(--border-transp));
 }
-/* if our game is ended show all tubes as winning, or individual ones*/
- .Tube.winning {
-    border-color: rgba(0,240,150,1);
+/* as long as we aren't on 'simple' borders also fade non legal moves */
+body:has(#FeedbackSimple:not(:checked)) .Tube.unmovable {
+    --border: rgba(128,128,128, var(--border-transp));
 }
- .GameBoard.ended.winning {
-     background-color: rgba(0,240,150,0.3);
- }
-/** same deal with dead, except make sure dead doesn't override unmovable since they end up together */
-.Tube.dead:not(.unmovable) {
-    border-color: rgba(255,0,0,1);
+
+/* mark with red border when:
+ - we are in dead end state
+ - non-simple mode and move goes to visited dead state
+ - verbose mode and move goes to calculated dead state (could be unvisited)*/
+.GameBoard.ended.dead .Tube,
+body:has(#FeedbackSimple:not(:checked)) .Tube.visited.dead,
+body:has(#FeedbackVerbose:checked) .Tube.dead:not(.unmovable) {
+    /* does not affect --border or outline logic, leave that alone */
+    border-color: rgba(255,0,0,var(--border-transp));
 }
-.GameBoard.ended.dead {
-    background-color: rgba(255,0,0,0.3);
+/* mark with teal border when:
+ - we are in won end state
+ - non-simple mode and move goes to visited winning state
+ - verbose mode and move goes to viable winning state */
+.GameBoard.ended.winning .Tube,
+body:has(#FeedbackSimple:not(:checked)) .Tube.visited.winning,
+body:has(#FeedbackVerbose:checked) .Tube.winning {
+    /* does not affect --border or outline logic, leave that alone */
+    border-color: rgba(0,240,150,var(--border-transp));
+}
+/* verbose mode settings, change border style for different types of moves */
+body:has(#FeedbackVerbose:checked) .Tube.drain {
+    border-style: dotted;
+}
+body:has(#FeedbackVerbose:checked) .Tube.pure {
+    border-style: double;
+}
+body:has(#FeedbackVerbose:checked) .Tube.normal {
+    --border-transp: 0.85;
 }
 
 @keyframes ballDrop {
@@ -150,6 +189,11 @@ known to be unexplored be thicker seems like the best combo to me */
     /* in the event the padding of the label would overlap with other balls hide it */
     overflow: hidden;
 }
+/* set a slightly transparent background over the label to improve contrast */
+.Ball > span {
+    background-color: light-dark(rgba(255,255,255,0.5), rgba(0,0,0,0.5));
+    padding: 0.25em;
+}
 /* shroud logic, if there is a body with a checkbox with id #disableFog that is not checked then balls with shroud get this*/
 body:has(#disableFog:not(:checked)) .Ball.shroud:before {
     content: "?";
@@ -165,11 +209,6 @@ body:has(#disableFog:not(:checked)) .Ball.shroud > span {
    would cover it visually but copy/paste or accessibility stuff could
    still interact with it */
     display: none;
-}
-/* set a slightly transparent background over the label to improve contrast */
-.Ball > span {
-    background-color: light-dark(rgba(255,255,255,0.7), rgba(0,0,0,0.4));
-    padding: 0.25em;
 }
 
 .Ball.A { background-color: red; }
