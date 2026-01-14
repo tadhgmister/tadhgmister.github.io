@@ -119,10 +119,10 @@ export function computeMove(tubes: Tube[], idxToDrain: number): MoveQuality {
 	    return MoveQuality.NORMAL;
 	}
     }
-    else if(isSourcePure){
-	// if there weren't any partials to distribute to and our source is pure check for SHIFT case
-	// I.E. see if there is an empty tube bigger than our source tube and move to the next bigger one if possible.
-	// if there isn't any viable tubes then fall throguh to drain case (which also has a check for moving to a single smaller tube which is also considered shift)
+    if(isSourcePure){
+	// if this is a pure tube check for SHIFT case where we move to a larger empty tube instead of best fit
+	// we need to do this even if partials had slack as different logical gamestates with the same normalization representation
+	// would be treated as different move types otherwise.
 	for(const candidateIdx of empties.sort((a,b)=>(tubes[a].capacity-tubes[b].capacity))){
 	    if(tubes[candidateIdx].capacity > source.capacity){
 		const [elemsMoved, tubesUsed] = moveHelper(tubes, [candidateIdx], col, toMoveCount, toMoveCount);
@@ -753,7 +753,6 @@ export class StateManager{
 	    continue;
 	}
 	const toCheckThisLayer = statesThatCouldBePartOfLoop.difference(alreadyCheckedForLoop);
-	for(const s of toCheckThisLayer){alreadyCheckedForLoop.add(s);}
 	// at this point all the definite parent/grandparent marking chain has been done. check the cycle candidates
 	for(const state of toCheckThisLayer){
 	    if(state.usefulness == StateUsefulness.DEAD || state.usefulness === StateUsefulness.WINNING){continue;}
