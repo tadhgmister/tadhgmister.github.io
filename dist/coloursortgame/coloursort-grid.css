@@ -108,8 +108,9 @@ li:has(input[type=hidden]) {
 /* the following is logic for tube border highlighting */
 
 
-/* hover makes border extend inward */
-.Tube:hover {
+/* clicking makes border extend inward, I'd like to also do hover for desktop but mobile annoyingly
+  treats "you just clicked on that thing" as hovering over it */
+.Tube:active {
     padding: 0px;
     border-width: calc(var(--tube-border-size) + var(--tube-padding-size));
 }
@@ -118,11 +119,11 @@ li:has(input[type=hidden]) {
     outline-width: var(--tube-padding-size);
 }
 /* make the border more vibrant when selected a legal move with either method */
-.Tube:not(.unmovable):hover, .Tube:not(.unmovable):focus-visible {
+.Tube:not(.unmovable):active, .Tube:not(.unmovable):focus-visible {
     --border-transp: 1;
 }
 /* if selected with either method on an unmovable tube make the border dashed */
-.Tube.unmovable:hover, .Tube.unmovable:focus-visible {
+.Tube.unmovable:active, .Tube.unmovable:focus-visible {
     border-style: dashed;
 }
 /* empty tubes should be "greyed out" to make them easier to differentiate */
