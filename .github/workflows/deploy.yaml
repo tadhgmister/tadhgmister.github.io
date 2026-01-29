@@ -11,7 +11,7 @@ permissions:
   id-token: write
 jobs:
   build:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
 
     steps:
     # Checkout repository
@@ -26,7 +26,7 @@ jobs:
 
     # Install Pandoc
     - name: Install Pandoc
-      run: sudo apt-get install -y pandoc tup
+      run: sudo apt-get update && sudo apt-get install -y pandoc tup
 
     # Install TypeScript dependencies
     - name: Install TypeScript Dependencies
