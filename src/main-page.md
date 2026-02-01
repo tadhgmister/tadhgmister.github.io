@@ -70,7 +70,7 @@ It is pronounced _Teague_ and means ["bard" or "poet" in gaelic][tadhgorigin]. (
 
 
 ## Interesting things I've done {#things-ive-done}
-- Created a clone of the [water/ball sort game](coloursortgame/index.html)
+- Created a clone of the [water/ball sort game](coloursort)
 - For the 4th year engineering project our team designed a wearable watch to collect biometrics, I wrote the [program to offload the data from the device and log / graph it for demonstration.][4thyearproject]
 - Designed circuits in [Logisim] and [made edits to the Java source code][logisimfix] to better support using it on an iPad
 - [Github issues for typescript][typescriptAuthored] that I've authored including a [viable proposal][tsInheritProposal] to one of typescripts longest outstanding limitations
