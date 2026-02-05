@@ -37,7 +37,7 @@ jobs:
     #   run: npx tsc
 
     # Compile Markdown to HTML using Pandoc
-    - name: Compile Markdown
+    - name: run Tup
       run: |
         tup init && tup
 
