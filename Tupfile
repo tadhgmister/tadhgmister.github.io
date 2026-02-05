@@ -1,4 +1,5 @@
 : src/main-page.md template.html |> pandoc --html-q-tags --ascii --section-divs --standalone --template %2f %1f > %o |> dist/index.html
 
-# I cannot for the life of me figure out how to make tup happy to just populate this folder with files and not complain about it being a temporary file.
-#: src/coloursort/*.ts |> npx tsc |> dist/coloursort/scripts/
+
+: src/coloursort/*.ts |> npx tsc |> ^dist/coloursort/[^.]*\.js
+

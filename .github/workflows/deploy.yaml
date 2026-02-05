@@ -24,17 +24,17 @@ jobs:
       with:
         node-version: 16 # Adjust the version as needed
 
-    # Install Pandoc
-    - name: Install Pandoc
+    # Install Pandoc and tup
+    - name: Install Pandoc and Tup
       run: sudo apt-get update && sudo apt-get install -y pandoc tup
 
     # Install TypeScript dependencies
     - name: Install TypeScript Dependencies
       run: npm install
 
-    # Compile TypeScript
-    - name: Compile TypeScript
-      run: npx tsc
+    # # Compile TypeScript, no longer needed as tup is now setup to do it
+    # - name: Compile TypeScript
+    #   run: npx tsc
 
     # Compile Markdown to HTML using Pandoc
     - name: Compile Markdown
