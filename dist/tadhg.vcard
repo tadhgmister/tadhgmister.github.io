@@ -1,24 +1,24 @@
 BEGIN:VCARD
 VERSION:4.0
 KIND:individual
-SOURCE:https://tadhg.mcdj.solutions/tadhg.vcard
+SOURCE:https://tadhg.mcdonald-jensen.ca/tadhg.vcard
 FN:Tadhg McDonald-Jensen
 N:McDonald-Jensen;Tadhg;Matthew;;
-URL:https://tadhg.mcdj.solutions
-PHOTO;MEDIATYPE=image/png;VALUE=URI:https://tadhg.mcdj.solutions/favicon.png
+URL:https://tadhg.mcdonald-jensen.ca
+PHOTO;MEDIATYPE=image/png;VALUE=URI:https://tadhg.mcdonald-jensen.ca/favicon.png
 BDAY:19971227
 ADR:;;63 Bramblegrove Crescent;Ottawa;Ontario;K1T3G2;Canada
 GEO;TYPE=home:geo:45.36685380239688\,-75.6232081859475
-IMPP:xmpp:lordtadhg@chatterboxtown.us
+IMPP:xmpp:tadhg@chat.mcdonald-jensen.ca
 IMPP:tel:+13436552007
 TEL;ALTID=1;VALUE=uri;TYPE=text,cell;PREF=1:tel:+13436552007
 TEL;ALTID=1;VALUE=text;TYPE=CELL:+1 (343) 655-2007
 TEL;ALTID=2;VALUE=uri;TYPE=voice,home;PREF=2:tel:+16132498866
 TEL;ALTID=2;VALUE=text;TYPE=HOME:+1 (613) 249-8866
-EMAIL;PREF=2:tadhg@mcdj.solutions
+EMAIL;PREF=2:tadhg@mcdonald-jensen.ca
 EMAIL;PREF=1:tadhgmister@gmail.com
 EMAIL;TYPE=work:tadhgmcdonaldjensen@cmail.carleton.ca
-CALADRURI:mailto:tadhg@mcdj.solutions
+CALADRURI:mailto:tadhg@mcdonald-jensen.ca
 RELATED;TYPE=emergency:tel:+16132498866
 TZ:America/Toronto
 LANG:en-CA
