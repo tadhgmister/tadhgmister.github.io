@@ -1,5 +1,8 @@
-: src/main-page.md template.html |> pandoc --html-q-tags --ascii --section-divs --standalone --template %2f %1f > %o |> dist/index.html
+!page = | template.html |> pandoc --html-q-tags --ascii --section-divs --standalone --template template.html %1f > %o |> 
 
+: src/main-page.md |> !page |> dist/index.html
+
+: foreach src/doz/*.md |> !page |> dist/doz/%B.html
 
 : src/coloursort/*.ts |> npx tsc |> ^dist/coloursort/[^.]*\.js
 
