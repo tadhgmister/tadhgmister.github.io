@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="background: transparent; background-color: transparent; color-scheme: light dark;"
+     xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="304px" height="404px" viewBox="-2 -2 302 402">
+  <defs/>
+  <rect x="0" y="0" width="300" height="400" pointer-events="all" fill="none"
+	style="stroke: light-dark(black, white);"/>
+  <path d="M 100 0 l 0 400" stroke-dasharray="3 3"
+	style="stroke: light-dark(black, white);"/>
+  <path d="M 200 0 l 0 400" stroke-dasharray="3 3"
+	style="stroke: light-dark(black, white);"/>
+  <path d="M 0 100 l 300 0" stroke-dasharray="3 3"
+	style="stroke: light-dark(black, white);"/>
+  <path d="M 0 200 l 300 0" stroke-dasharray="3 3"
+	style="stroke: light-dark(black, white);"/>
+  <path d="M 0 300 l 300 0" stroke-dasharray="3 3"
+	style="stroke: light-dark(black, white);"/>
+</svg>
