@@ -127,47 +127,156 @@ We will adopt many of the same english words for digits with these exceptions:
 - ㍢ (ten) will be spoken as "dek"
 - ㍣ (eleven) will be spoken as "el"
 
+
 Choosing null and sev are to make each digit monosyllabic. The word "dek" and "el" are based on existing dozonal proposals, "dek" is based on the prefix typically used such as in "decathlon", and "el" is used as a monosyllabic version of eleven.
 
+
 ## within a scale group
-
 For numbers with up to 4 digits (and groups of 4 digits for larger numbers) will be spoken with the following rules:
-- the least significant digit is spoken as the digit itself, so ㍛ would be said as simply "four"
-- the second digit to the left (dozens column) will be said with the suffix "doz", so ㍛㍜ would be said as "three-doz four"
-- the third digit to the left (gross column) is said as is but there should be a short pause between the 2nd and third digit. So for example ㍚㍛㍜ would be said as "two, three-doz four"
-- the first digit in a group of 4 is suffixed by "vek". So ㍙㍚㍛㍜ would be said as "one-vek two, three-doz four"
 
-### When to say "null"
-TODO fill this in
+- the dozens column (second to last digit) is suffixed by "doz"
+- the gross column (3rd to last digit) is suffixed by a short pause
+- the first digit in a group of 4 is suffixed by "nod"
 
-only needed to join suffix?
-
-㍙㍘ - one-doz or one-doz null
-
-㍙㍘㍘㍘ - one-vek or one-vek null or one-vek null, null-doz null?
+so for example ㍜㍛㍚㍙ is "four-nod three, two-doz one"
 
 
-## Scale markers
+#### NEW RULES FOR ZEROS
 
-TODO clean this up and fill in details about how scale markers are actually placed.
+<!-- idk why nested unordered lists inside ordered list breaks pandocs interprertation but to fix it I need to use manual html here. -->
+<ol>
+<li>leading zeros on first (or only) group and trailing zeros on last group (when there is an explicit scale marker) can be omitted
+  <ul>
+	<li>㍘㍘㍘㍙ = ㍘㍘㍙ = ㍘㍙ = ㍙ is "one"</li>
+	<li>㍙.㍚㍛㍘㍘ = ㍙.㍚㍛ is "one point two-nod three"</li> 
+</ul></li>
+<li>zero in non suffixed position surrounded by non zero characters can be omitted
+<ul>
+  <li> ㍚㍘ can be shortened to "two-doz" instead of "one-doz _null_"</li>
+  <li>㍙㍘㍚㍘ is "one-nod two-doz" without needing nulls</li>
+</ul></li>
+<li>zero in suffixed position surrounded by non zero digits must be said
+<ul>
+  <li>㍙㍘㍚ is "one, null-doz two"</li>
+  <li>㍙.㍘㍚ is "one point null-nod two"</li>
+</ul></li>
+<li>if both dozens and units position have zeros, we say the word "gross" instead of "null-doz null". this is not necessary on the last group after an explicit scale marker
+<ul>
+  <li> ㍙㍘㍘ is "one gross"</li>
+  <li> ㍚㍘㍘㍘ is "two-nod gross"</li>
+  <li> ㍠㍚㍘㍘.㍚㍚ is "eight-nod two **gross** point two-nod two" (the trailing gross is omitted)</li>
+</ul></li>
+<li>if both the most significant digits are zero and the dozen position is non zero we just write "null" instead of "null-nod". 
+</li>
+<li>If there are 3 leading zeros we say "nod-null-doz" as a shortform of "null-nod null-doz"
+<ul>
+  <li>㍙.㍘㍘㍘㍚ is "one point **nod-null-doz** two"</li>
+  <li>㍙.㍘㍘㍛㍚ is "one point **null** three-doz two" although "one point **null-nod** three-doz two" is also allowed.</li>
+</ul></li>
+<li>If an entire group of digits is zeros just the word "null" for that group
+  <ul><li>㍙A㍘㍘㍘㍘.㍚㍛ is said "one cap-aye **null point** two-nod three"</li>
+</ul></li>
+<li>the trailing "nod" suffix on the last digit after an explicit scale marker _can_ be omitted
+  <ul><li>㍙.㍚ can be "one point two" but can also be "one point two-nod" if differentiating from decimal 1.2 is important.</li>
+</ul></li>
+</ol>
+If there is a long string of zeros the number can be split up with an addition, such as ㍙㍚C㍘㍘㍘㍘B㍘㍘㍘㍘A㍘㍘㍝㍜ would be said "one-doz two cap-see, null bee, null aye, null five-doz four" but we could choose to write it instead as ㍙㍚C㍘ + ㍝㍜ which would be said "one-doz two cap-see plus five-doz four" 
+  
+#### OLD Atempt at summary of zeros rules:
+
+- zero in non-suffixed position surrounded by non zero characters can be omitted
+  - ㍙㍘ is just "one-doz"
+  - ㍙㍘㍚㍘ is "one-nod two-doz"
+- zero in suffixed position surrounded by non zero digits must be said
+  - ㍙㍘㍚ is "one, null-doz two"
+  - ㍙.㍘㍚ is "one point null-nod two"
+- zero in dozens and unit position is replaced with word "gross" (is not necessary on the last group after a scale marker)
+  - ㍙㍘㍘ is "one gross"
+  - ㍠㍚㍘㍘.㍚㍚ is "eight-nod two gross point two-nod two" (the trailing gross is omitted)
+<!-- - any other sequence of 2 or more zeros only the last one must be spoken 
+   - ㍙.㍘㍘㍘㍙ is "one point null-doz one"
+   - ㍙.㍘㍘㍞ is "one point null six-doz" 
+   - ㍙㍘㍘㍛ is "one-nod null-doz three" 
+   - ㍚㍘㍘㍘ **should be "two-nod null" or "two-nod gross"?** -->
+- leading zeros on first (or only) group are omitted
+  - ㍙㍘ is "one doz" but ㍝.㍘㍘㍙㍘ is "five point **null** one-doz"
+- trailing zeros on last group when there is an explicit scale marker can be omitted
+- trailing "nod" suffix of only digit after last scale marker can be omitted
+  - ㍙.㍚ can be "one point two" or "one point two-nod"
 
 
-- period seperating integer part from fractional part is pronouced "point"
-- each letter denoting scale marker uses the english word for the letter such as "aye", "bee", "sea" etc
-- the first spoken scale marker (unless it is "point") must be prefixed by "big" or "lil" to denote whether it is uppercase or lowercase.
+These rules make a potential mix up about this case:
+
+- ㍙.㍘㍙ is "one point null-**nod** one"
+- ㍙.㍘㍘㍘㍙ is "one point null-**doz** one"
+
+Only differing by the suffix _on a null_ is undesirable, but using "one point null-nod null-doz one" feels like a poor alternative.
+
+could "nod-null-doz" be used for 3 leading zeros?
+
+## all combinations for middle of number: (between two other groups of digits:
+
+- ㍣.㍘㍘㍘㍙a㍣ "el point null-doz one aye el"
+- ㍣.㍘㍘㍚㍘a㍣ "el point null two-doz aye el"
+- ㍣.㍘㍘㍚㍙a㍣ "el point null two-doz one aye el"
+- ㍣.㍘㍜㍘㍘a㍣ "el point null-nod four gross aye el"
+- ㍣.㍘㍜㍘㍙a㍣ "el point null-nod four null-doz one aye el"
+- ㍣.㍘㍜㍚㍘a㍣ "el point null-nod four two-doz aye el"
+- ㍣.㍘㍜㍚㍙a㍣ "el point null-nod four two-doz one aye el"
+- ㍣.㍠㍘㍘㍘a㍣ "el point eight-nod null aye el"
+  - when last three digits are null only one "null" is needed
+- ㍣.㍠㍘㍘㍙a㍣ "el point eight-nod **null-doz** one aye el"
+  - when middle two digits are zero only null-doz is needed
+- ㍣.㍠㍘㍚㍘a㍣ "el point eight-nod, two-doz aye el"
+- ㍣.㍠㍘㍚㍙a㍣ "el point eight-nod,  two-doz one aye el"
+- ㍣.㍠㍜㍘㍘a㍣ "el point eight-nod four gross aye el"
+- ㍣.㍠㍜㍘㍙a㍣ "el point eight-nod four null-doz one aye el"
+- ㍣.㍠㍜㍚㍘a㍣ "el point eight-nod four two-doz aye el"
+- ㍣.㍠㍜㍚㍙a㍣ "el point eight-nod four two-doz one aye el"
+
+<!-- all combos for leading zeros in last group: -->
 
 
-<!-- ## scale markers -->
+<!-- - ㍙.㍚ "one point two" -->
+<!--   - nod is omitted on the last digit of a number (only digit after last scale marker) -->
+<!-- - ㍙.㍚㍛ "one point two-nod three" -->
+<!-- - ㍙.㍘㍚ "one point **null-nod** two" -->
+<!--   - null-nod necessary on non first group -->
+<!-- - ㍙.㍘㍚㍛ "one point null-nod two, three-doz" -->
+<!-- - ㍙.㍘㍘㍚ "one point **null** two-doz" -->
+<!--   - leading two zeros just needs null to hold for both -->
+<!-- - ㍙.㍘㍘㍚㍛ "one point null two-doz three" -->
+<!--   - ㍙.㍚㍛ and ㍙.㍘㍘㍚㍛ only differ by doz vs nod which is undesirable, leading zero possibly needed? -->
+<!-- - ㍙.㍘㍘㍘㍚ "one point null-doz two" -->
+
+<!-- options for trailing zeros in non last group -->
+
+<!-- - ㍙㍘.㍚ "one-doz point two" -->
+<!-- - ㍙㍘㍘.㍚ "one gross point two" -->
+<!-- - ㍙㍘㍘㍘.㍚ "one-nod null point two" -->
+
+
+<!-- ## Scale markers -->
+
+<!-- TODO clean this up and fill in details about how scale markers are actually placed. -->
+
+
 <!-- - period seperating integer part from fractional part is pronouced "point" -->
 <!-- - each letter denoting scale marker uses the english word for the letter such as "aye", "bee", "sea" etc -->
 <!-- - the first spoken scale marker (unless it is "point") must be prefixed by "big" or "lil" to denote whether it is uppercase or lowercase. -->
 
-<!-- ## groupings -->
-<!-- These rules describe how to pronouce a group of 4 digits between explicit scale markers, the last group has omited trailing zeros omitted verbally. The first group logically has leading zeros which are omited but counted when referring to which digits are which, so for example ㍚㍞ would be the 3rd and 4th digit of the group and the first and second digit are omited / silent. -->
-<!-- - the second and last number in a group of 4 digits between scale markers are said as is -->
-<!-- - the first digit after a scale marker is suffixed by "vek",  -->
-<!--   - so ㍘.㍛㍞ is said as "null point three-vek six" -->
-<!-- - the third digit (dozens place relative to the next scale mark) is suffixed by "doz" -->
-<!--   - so ㍙㍜ is "one-doz four" -->
-<!-- - zeros are explicitly said as "null" -->
-<!--   - ㍜㍘㍟ is "four null-doz sev" -->
+
+<!-- <\!-- ## scale markers -\-> -->
+<!-- <\!-- - period seperating integer part from fractional part is pronouced "point" -\-> -->
+<!-- <\!-- - each letter denoting scale marker uses the english word for the letter such as "aye", "bee", "sea" etc -\-> -->
+<!-- <\!-- - the first spoken scale marker (unless it is "point") must be prefixed by "big" or "lil" to denote whether it is uppercase or lowercase. -\-> -->
+
+<!-- <\!-- ## groupings -\-> -->
+<!-- <\!-- These rules describe how to pronouce a group of 4 digits between explicit scale markers, the last group has omited trailing zeros omitted verbally. The first group logically has leading zeros which are omited but counted when referring to which digits are which, so for example ㍚㍞ would be the 3rd and 4th digit of the group and the first and second digit are omited / silent. -\-> -->
+<!-- <\!-- - the second and last number in a group of 4 digits between scale markers are said as is -\-> -->
+<!-- <\!-- - the first digit after a scale marker is suffixed by "nod",  -\-> -->
+<!-- <\!--   - so ㍘.㍛㍞ is said as "null point three-nod six" -\-> -->
+<!-- <\!-- - the third digit (dozens place relative to the next scale mark) is suffixed by "doz" -\-> -->
+<!-- <\!--   - so ㍙㍜ is "one-doz four" -\-> -->
+<!-- <\!-- - zeros are explicitly said as "null" -\-> -->
+<!-- <\!--   - ㍜㍘㍟ is "four null-doz sev" -\-> -->
