@@ -165,6 +165,7 @@ so for example ㍜㍛㍚㍙ is "four-nod three, two-doz one"
   <li> ㍙㍘㍘ is "one gross"</li>
   <li> ㍚㍘㍘㍘ is "two-nod gross"</li>
   <li> ㍠㍚㍘㍘.㍚㍚ is "eight-nod two **gross** point two-nod two" (the trailing gross is omitted)</li>
+  <li> ㍙.㍘㍚ **could potentially be "one point two gross"**</li>
 </ul></li>
 <li>if both the most significant digits are zero and the dozen position is non zero we just write "null" instead of "null-nod". 
 </li>
@@ -214,7 +215,7 @@ Only differing by the suffix _on a null_ is undesirable, but using "one point nu
 
 could "nod-null-doz" be used for 3 leading zeros?
 
-## all combinations for middle of number: (between two other groups of digits:
+### all combinations for middle of number: (between two other groups of digits:
 
 - ㍣.㍘㍘㍘㍙a㍣ "el point null-doz one aye el"
 - ㍣.㍘㍘㍚㍘a㍣ "el point null two-doz aye el"
@@ -234,26 +235,26 @@ could "nod-null-doz" be used for 3 leading zeros?
 - ㍣.㍠㍜㍚㍘a㍣ "el point eight-nod four two-doz aye el"
 - ㍣.㍠㍜㍚㍙a㍣ "el point eight-nod four two-doz one aye el"
 
-<!-- all combos for leading zeros in last group: -->
+### all combos for leading zeros in last group:
 
 
-<!-- - ㍙.㍚ "one point two" -->
-<!--   - nod is omitted on the last digit of a number (only digit after last scale marker) -->
-<!-- - ㍙.㍚㍛ "one point two-nod three" -->
-<!-- - ㍙.㍘㍚ "one point **null-nod** two" -->
-<!--   - null-nod necessary on non first group -->
-<!-- - ㍙.㍘㍚㍛ "one point null-nod two, three-doz" -->
-<!-- - ㍙.㍘㍘㍚ "one point **null** two-doz" -->
-<!--   - leading two zeros just needs null to hold for both -->
-<!-- - ㍙.㍘㍘㍚㍛ "one point null two-doz three" -->
-<!--   - ㍙.㍚㍛ and ㍙.㍘㍘㍚㍛ only differ by doz vs nod which is undesirable, leading zero possibly needed? -->
-<!-- - ㍙.㍘㍘㍘㍚ "one point null-doz two" -->
+- ㍙.㍚ "one point two"
+  - nod is omitted on the last digit of a number (only digit after last scale marker)
+- ㍙.㍚㍛ "one point two-nod three"
+- ㍙.㍘㍚ "one point **null-nod** two"
+  - null-nod necessary on non first group
+- ㍙.㍘㍚㍛ "one point null-nod two, three-doz"
+- ㍙.㍘㍘㍚ "one point **null** two-doz"
+  - leading two zeros just needs null to hold for both
+- ㍙.㍘㍘㍚㍛ "one point null two-doz three"
+  - ㍙.㍚㍛ and ㍙.㍘㍘㍚㍛ only differ by doz vs nod which is undesirable, leading zero possibly needed?
+- ㍙.㍘㍘㍘㍚ "one point null-doz two"
 
-<!-- options for trailing zeros in non last group -->
+### options for trailing zeros in non last group
 
-<!-- - ㍙㍘.㍚ "one-doz point two" -->
-<!-- - ㍙㍘㍘.㍚ "one gross point two" -->
-<!-- - ㍙㍘㍘㍘.㍚ "one-nod null point two" -->
+- ㍙㍘.㍚ "one-doz point two"
+- ㍙㍘㍘.㍚ "one gross point two"
+- ㍙㍘㍘㍘.㍚ "one-nod null point two"
 
 
 <!-- ## Scale markers -->
