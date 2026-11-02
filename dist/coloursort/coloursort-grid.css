@@ -212,6 +212,39 @@ body:has(#disableFog:not(:checked)) .Ball.shroud > span {
     display: none;
 }
 
+/* --- settings popup logic --- */
+
+/* by default the settings form (and backdrop) is hidden; it is only shown when it is the
+   :target of the URI hash (e.g. #settingsForm) */
+#settingsForm, #settingsBackdrop {
+    display: none;
+}
+#settingsForm:target {
+    display: block;
+    /* EVERYTHING BELOW THIS UNTIL THE CLOSING BRACE IS AI GENERATED FOR CENTERING THE SETTINGS BOX */
+    position: fixed;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90vw, 600px);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 1.5em;
+    border-radius: 10px;
+    background: light-dark(white, #1c1c1c);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+/** STYLING INJECTED BY AI TO MAKE IT LOOK PRETTY, greys the background when settings page is open */
+body:has(#settingsForm:target) #settingsBackdrop {
+    display: block;
+    position: fixed;
+    z-index: 99;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+}
+
 .Ball.A { background-color: red; }
 .Ball.B { background-color: blue; }
 .Ball.C { background-color: lime; }
